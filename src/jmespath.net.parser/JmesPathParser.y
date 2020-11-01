@@ -43,7 +43,10 @@
 	T_LBRACKET,
 	T_RBRACKET,
 	T_LPAREN,
-	T_RPAREN
+	T_RPAREN,
+
+	T_LBLOCK,
+	T_RBLOCK
 
 %left T_PIPE
 %left T_OR
@@ -67,11 +70,26 @@
 %start expression
 
 %%
-expression			: expression_impl
+
+expression			: expression_block
 					{
 						OnExpression();
 						ResolveParsingState();
 					}					
+					;
+
+expression_block    : block expression_impl
+                    {
+					}
+                    | expression_impl
+                    {
+					}
+					;
+
+block               : T_LBLOCK T_RBLOCK
+                    {
+						System.Diagnostics.Debug.WriteLine("block");
+					}
 					;
 
 expression_impl		: sub_expression
@@ -98,13 +116,16 @@ sub_expression		: sub_expression_impl
 					}
 					;
 
-sub_expression_impl	: expression T_DOT identifier
+sub_expression_impl	: expression T_DOT identifier_block
 					| expression T_DOT multi_select_hash
 					| expression T_DOT multi_select_list
 					| expression T_DOT function_expression
 					| expression T_DOT hash_wildcard
 					;
 
+identifier_block    : block identifier
+                    | identifier
+					;
 
 index_expression	: expression bracket_specifier
 					{

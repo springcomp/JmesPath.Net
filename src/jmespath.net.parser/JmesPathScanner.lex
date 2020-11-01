@@ -35,6 +35,9 @@ T_QSTRING		\"[^\"\\\b\f\n\r\t]*((\\[\"\\/bfnrt]|\\u[0-9a-fA-F]{4})+[^\"\\\b\f\n\
 T_RSTRING		'(\\?[^'\\])*((\\['\\])+(\\?[^'\\])*)*'
 T_USTRING		[A-Za-z_][0-9A-Za-z_]*
 
+T_LBLOCK        \{%
+T_RBLOCK        %\}
+
 T_LBRACE		\{
 T_RBRACE		\}
 T_LBRACKET		\[
@@ -86,6 +89,9 @@ E_UNRECOGNIZED	.
 {T_QSTRING}			{ return MakeToken(TokenType.T_QSTRING); }
 {T_RSTRING}			{ return MakeToken(TokenType.T_RSTRING); }
 {T_USTRING}			{ return MakeToken(TokenType.T_USTRING); }
+
+{T_LBLOCK}			{ return MakeToken(TokenType.T_LBLOCK); }
+{T_RBLOCK}			{ return MakeToken(TokenType.T_RBLOCK); }
 
 {T_LBRACE}			{ return MakeToken(TokenType.T_LBRACE); }
 {T_RBRACE}			{ return MakeToken(TokenType.T_RBRACE); }

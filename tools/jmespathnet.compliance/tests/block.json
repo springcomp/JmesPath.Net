@@ -1,0 +1,27 @@
+[
+  {
+    "given": {
+      "items": [
+        {
+          "id": "123",
+          "children": [ { "name": "a" }, { "name": "b" } ]
+        },
+        {
+          "id": "321",
+          "children": [ { "name": "c" }, { "name": "d" } ]
+        }
+      ]
+    },
+    "cases": [
+      {
+        "expression": "items[].{% %} children[].{ parent: `\"123\"`, name: name }",
+        "result": [
+          { "parent": "123", "name": "a" },
+          { "parent": "123", "name": "b" },
+          { "parent": "123", "name": "c" },
+          { "parent": "123", "name": "d" }
+        ]
+      }
+    ]
+  }
+]

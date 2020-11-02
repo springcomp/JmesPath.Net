@@ -10,7 +10,7 @@
         [Fact]
         public void ParseEmptyBlock()
         {
-            const string expression = "{% %} foo.{% %} bar";
+            const string expression = "items[]. {% %} children";
             var ast = Parse(expression);
 
             Expect(ast, type: null, expression: null, "identifier", "identifier");

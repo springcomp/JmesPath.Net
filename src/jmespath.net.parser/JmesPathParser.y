@@ -71,19 +71,11 @@
 
 %%
 
-expression			: expression_block
+expression			: expression_impl
 					{
 						OnExpression();
 						ResolveParsingState();
 					}					
-					;
-
-expression_block    : block expression_impl
-                    {
-					}
-                    | expression_impl
-                    {
-					}
 					;
 
 block               : T_LBLOCK T_RBLOCK
@@ -116,15 +108,15 @@ sub_expression		: sub_expression_impl
 					}
 					;
 
-sub_expression_impl	: expression T_DOT identifier_block
+sub_expression_impl	: expression T_DOT block_identifier
 					| expression T_DOT multi_select_hash
 					| expression T_DOT multi_select_list
 					| expression T_DOT function_expression
 					| expression T_DOT hash_wildcard
 					;
 
-identifier_block    : block identifier
-                    | identifier
+block_identifier    : block identifier
+					| identifier
 					;
 
 index_expression	: expression bracket_specifier

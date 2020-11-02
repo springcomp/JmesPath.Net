@@ -16,6 +16,7 @@
 
 	T_COLON,
 	T_COMMA,
+	T_SEMICOLON
 	T_DOT,
 	T_PIPE,
 	
@@ -25,6 +26,7 @@
 	T_LT,
 	T_LE,
 	T_NE,
+	T_LET,
 
 	T_FILTER,
 	T_FLATTEN,
@@ -78,9 +80,25 @@ expression			: expression_impl
 					}					
 					;
 
-block               : T_LBLOCK T_RBLOCK
+block               : T_LBLOCK block_statements T_RBLOCK
                     {
 						System.Diagnostics.Debug.WriteLine("block");
+					}
+					;
+
+block_statements    : block_statement
+					{
+						System.Diagnostics.Debug.WriteLine("block statement");
+					}
+                    | block_statements T_SEMICOLON block_statement
+                    ;
+
+block_statement     : block_assignment
+                    ;
+
+block_assignment    : T_USTRING T_LET expression
+                    {
+						System.Diagnostics.Debug.WriteLine("block assignment");
 					}
 					;
 

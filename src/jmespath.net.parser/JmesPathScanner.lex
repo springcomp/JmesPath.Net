@@ -12,6 +12,7 @@ T_NOT			!
 
 T_COLON         :
 T_COMMA         ,
+T_SEMICOLON     ;
 T_DOT           \.
 T_PIPE			\|
 
@@ -21,6 +22,8 @@ T_GE			>=
 T_LT			<
 T_LE			<=
 T_NE			!=
+
+T_LET           :=
 
 T_FLATTEN		\[\]
 T_FILTER		\[\?
@@ -61,6 +64,7 @@ E_UNRECOGNIZED	.
 		return obj.token;
 	}
 
+{T_LET}				{ return MakeToken(TokenType.T_LET); }
 
 {T_AND}				{ return MakeToken(TokenType.T_AND); }
 {T_OR}				{ return MakeToken(TokenType.T_OR); }
@@ -68,6 +72,7 @@ E_UNRECOGNIZED	.
 
 {T_COLON}			{ return MakeToken(TokenType.T_COLON); }
 {T_COMMA}			{ return MakeToken(TokenType.T_COMMA); }
+{T_SEMICOLON}		{ return MakeToken(TokenType.T_SEMICOLON); }
 {T_DOT}				{ return MakeToken(TokenType.T_DOT); }
 {T_PIPE}			{ return MakeToken(TokenType.T_PIPE); }
 

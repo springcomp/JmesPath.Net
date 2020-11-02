@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace jmespath.net.compliance
@@ -19,11 +20,16 @@ namespace jmespath.net.compliance
             else if (File.Exists(folder))
                 files = new[] { folder };
 
+            var pattern = cmdLine.TestPattern;
+
             var compliance = new Compliance();
 
             foreach (var path in files)
             {
                 var name = Path.GetFileName(path);
+                if (!MatchTest(pattern, name))
+                    continue;
+
                 ConsoleEx.WriteLine(ConsoleColor.Cyan, $"Executing compliance test {name}...");
 
                 var content = File.ReadAllText(path, new UTF8Encoding(false));
@@ -38,6 +44,13 @@ namespace jmespath.net.compliance
 
             ConsoleEx.WriteLine(ConsoleColor.White, $"Compliance summary:");
             ConsoleEx.WriteLine(ConsoleColor.White, $"Success rate: {success:P}, {succeeded}/{total} succeeded, {failed}/{total} failed.");
+        }
+
+
+        private static bool MatchTest(string pattern, string name)
+        {
+            var regex = new Regex(pattern, RegexOptions.Singleline);
+            return regex.Match(name).Success;
         }
     }
 }

@@ -7,6 +7,7 @@ namespace jmespath.net.compliance
     public class CommandLine
     {
         public string TestSuitesFolder { get; set; }
+        public string TestPattern { get; set; }
 
         private CommandLine()
         {
@@ -19,6 +20,7 @@ namespace jmespath.net.compliance
             var options = new OptionSet
             {
                 { "t|tests|test-suites=", v => commandLine.TestSuitesFolder = v },
+                { "n|name|test-name=", v => commandLine.TestPattern = MakeRegex(v) },
             };
 
             try
@@ -33,6 +35,16 @@ namespace jmespath.net.compliance
             }
 
             return commandLine;
+        }
+
+        private static string MakeRegex(string pattern)
+        {
+            var regex = pattern
+                .Replace(".", @"\.")
+                .Replace("*", @".*")
+                ;
+
+            return regex;
         }
 
         private static void ParseRemainingArguments(List<string> remaining)

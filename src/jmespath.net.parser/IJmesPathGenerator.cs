@@ -48,5 +48,7 @@
         void OnExpressionType();
 
         void OnPipeExpression();
+
+        void OnClosure(string name);
     }
 }

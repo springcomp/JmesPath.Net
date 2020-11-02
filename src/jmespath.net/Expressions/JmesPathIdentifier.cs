@@ -15,6 +15,8 @@ namespace DevLab.JmesPath.Expressions
 
         protected override JmesPathArgument Transform(JToken json)
         {
+            Context?.Execute(json);
+
             var jsonObject = json as JObject;
             return jsonObject?[name_];
         }

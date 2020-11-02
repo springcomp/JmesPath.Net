@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DevLab.JmesPath.Interop;
 using DevLab.JmesPath.Utils;
+using jmespath.net.Blocks;
 using Newtonsoft.Json.Linq;
 
 namespace DevLab.JmesPath.Expressions
@@ -20,6 +21,8 @@ namespace DevLab.JmesPath.Expressions
         /// <returns></returns>
         public virtual JmesPathArgument Transform(JmesPathArgument argument)
         {
+            // apply transform
+
             if (argument.IsProjection)
             {
                 var items = new List<JmesPathArgument>();
@@ -46,6 +49,8 @@ namespace DevLab.JmesPath.Expressions
         protected abstract JmesPathArgument Transform(JToken json);
 
         public bool IsExpressionType { get; private set; }
+
+        public JmesPathBlock Context { get; set; }
 
         public static void MakeExpressionType(JmesPathExpression expression)
         {

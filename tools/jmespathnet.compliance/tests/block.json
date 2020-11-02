@@ -14,7 +14,7 @@
     },
     "cases": [
       {
-        "expression": "items[].{% expression := id %} children[].{ parent: `\"123\"`, name: name }",
+        "expression": "items[].{% expression := id %} children[].{ parent: evaluate(`\"expression\"`), name: name }",
         "result": [
           { "parent": "123", "name": "a" },
           { "parent": "123", "name": "b" },

@@ -1,15 +1,17 @@
 ﻿namespace jmespath.net.parser.tests.Blocks
 {
     using DevLab.JmesPath;
+    using System;
     using System.Collections.Generic;
 
-    public class AstBuilder : IJmesPathGenerator
+    public partial class AstBuilder : IJmesPathGenerator
     {
         readonly Stack<AstNode> expressions_
             = new Stack<AstNode>()
             ;
 
         AstNode expression_;
+        AstBlock block_;
 
         public AstNode Root => expression_;
 
@@ -32,6 +34,18 @@
 
         public virtual void OnAndExpression()
         {
+        }
+
+        public virtual void OnClosure(string identifier)
+        {
+            System.Diagnostics.Debug.Assert(expression_ != null);
+
+            block_ = block_ ?? new AstBlock
+            {
+                Closure = new AstClosure { Identifier = identifier, Expression = expression_, },
+            };
+
+            expression_ = null;
         }
 
         public virtual void OnComparisonEqual()
@@ -86,10 +100,24 @@
 
         public virtual void OnIdentifier(string name)
         {
-            Prolog();
+            PushExpression();
 
             var expression = new AstNode("identifier", name);
+            expression.Block = PopBlock();
+
             expressions_.Push(expression);
+        }
+
+        private AstBlock PopBlock()
+        {
+            try
+            {
+                return block_;
+            }
+            finally
+            {
+                block_ = null;
+            }
         }
 
         public virtual void OnIndex(int index)
@@ -130,7 +158,7 @@
 
         public virtual void OnSubExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
 
@@ -165,7 +193,7 @@
         public virtual void PushMultiSelectList()
         {
         }
-        private bool Prolog()
+        private bool PushExpression()
         {
             if (expression_ != null)
             {
@@ -177,31 +205,9 @@
             return false;
         }
 
-        public sealed class AstNode
+        public void OnBlock()
         {
-            private readonly string type_;
-            private readonly string expression_;
-            private readonly AstNode left_;
-            private readonly AstNode right_;
-
-            public AstNode(string type, string expression)
-            {
-                type_ = type;
-                expression_ = expression;
-            }
-            public AstNode(AstNode left, AstNode right)
-            {
-                left_ = left;
-                right_ = right;
-            }
-            public string Type => type_;
-            public string Expression => expression_;
-
-            public AstNode Left => left_;
-            public AstNode Right => right_;
-
-            public override string ToString()
-                => $"{Type}: {Expression}";
+            throw new NotImplementedException();
         }
     }
 }

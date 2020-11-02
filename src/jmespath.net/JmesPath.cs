@@ -25,6 +25,8 @@ namespace DevLab.JmesPath
             repository_ = new JmesPathFunctionFactory();
             foreach (var name in JmesPathFunctionFactory.Default.Names)
                 repository_.Register(name, JmesPathFunctionFactory.Default[name]);
+
+            repository_.Register<EvaluateExpressionFunction>();
         }
 
         public IRegisterFunctions FunctionRepository => repository_;

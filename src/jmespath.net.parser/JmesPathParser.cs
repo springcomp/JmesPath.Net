@@ -223,5 +223,15 @@ namespace DevLab.JmesPath
         void OnCurrentNode() => generator_.OnCurrentNode();
 
         #endregion // Expressions
+
+        #region Blocks
+
+        public void OnClosure(Token token)
+        {
+            System.Diagnostics.Debug.Assert(token.Type == TokenType.T_USTRING);
+            generator_.OnClosure((string)token.Value);
+        }
+
+        #endregion
     }
 }

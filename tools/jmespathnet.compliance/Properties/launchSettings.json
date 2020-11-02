@@ -2,8 +2,8 @@
   "profiles": {
     "jmespathnet.compliance": {
       "commandName": "Project",
-      "commandLineArgs": "-t regression",
-      "workingDirectory": "E:\\Projects\\JmesPath.Net\\tools\\jmespathnet.compliance"
+      "commandLineArgs": "-t tests -n block",
+      "workingDirectory": "D:\\Projects\\springcomp\\JmesPath.NET\\tools\\jmespathnet.compliance"
     }
   }
 }

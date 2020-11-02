@@ -81,9 +81,6 @@ expression			: expression_impl
 					;
 
 block               : T_LBLOCK block_statements T_RBLOCK
-                    {
-						System.Diagnostics.Debug.WriteLine("block");
-					}
 					;
 
 block_statements    : block_statement
@@ -98,7 +95,8 @@ block_statement     : block_assignment
 
 block_assignment    : T_USTRING T_LET expression
                     {
-						System.Diagnostics.Debug.WriteLine("block assignment");
+						System.Diagnostics.Debug.WriteLine("block assignment: capturing scope in variable {0}.", $1.Token);
+						OnClosure($1.Token);
 					}
 					;
 

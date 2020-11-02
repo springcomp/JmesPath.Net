@@ -4,9 +4,11 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using DevLab.JmesPath.Expressions;
 using DevLab.JmesPath.Interop;
+using jmespath.net.Blocks;
 
 namespace DevLab.JmesPath
 {
+
     sealed class JmesPathGenerator : IJmesPathGenerator
     {
         /// <summary>
@@ -29,6 +31,10 @@ namespace DevLab.JmesPath
             = new Stack<JmesPathExpression>()
             ;
 
+        readonly Stack<JmesPathBlock> blocks_
+            = new Stack<JmesPathBlock>()
+            ;
+
         JmesPathExpression expression_;
 
         public JmesPathGenerator(IFunctionRepository repository)
@@ -44,21 +50,9 @@ namespace DevLab.JmesPath
                 expression_ = expressions_.Pop();
         }
 
-        bool Prolog()
-        {
-            if (expression_ != null)
-            {
-                expressions_.Push(expression_);
-                expression_ = null;
-                return true;
-            }
-
-            return false;
-        }
-
         public bool IsProjection()
         {
-            var pop = Prolog();
+            var pop = PushExpression();
 
             try
             {
@@ -78,7 +72,7 @@ namespace DevLab.JmesPath
 
         public void OnSubExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
 
@@ -94,7 +88,7 @@ namespace DevLab.JmesPath
 
         public void OnIndex(int index)
         {
-            Prolog();
+            PushExpression();
 
             var expression = new JmesPathIndex(index);
 
@@ -103,7 +97,7 @@ namespace DevLab.JmesPath
 
         public void OnFilterProjection()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 1);
 
@@ -115,21 +109,21 @@ namespace DevLab.JmesPath
 
         public void OnFlattenProjection()
         {
-            Prolog();
+            PushExpression();
 
             expressions_.Push(new JmesPathFlattenProjection());
         }
 
         public void OnListWildcardProjection()
         {
-            Prolog();
+            PushExpression();
 
             expressions_.Push(new JmesPathListWildcardProjection());
         }
 
         public void OnIndexExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
 
@@ -143,7 +137,7 @@ namespace DevLab.JmesPath
 
         public void OnSliceExpression(int? start, int? stop, int? step)
         {
-            Prolog();
+            PushExpression();
 
             var sliceExpression = new JmesPathSliceProjection(start, stop, step);
 
@@ -185,17 +179,26 @@ namespace DevLab.JmesPath
 
         public void OnIdentifier(string name)
         {
-            Prolog();
+            PushExpression();
 
             var expression = new JmesPathIdentifier(name);
+            expression.Context = ConsumeBlock();
+
             expressions_.Push(expression);
+        }
+
+        private JmesPathBlock ConsumeBlock()
+        {
+            if (blocks_.Count > 0)
+                return blocks_.Pop();
+            return null;
         }
 
         static readonly JmesPathHashWildcardProjection JmesPathHashWildcardProjection = new JmesPathHashWildcardProjection();
 
         public void OnHashWildcardProjection()
         {
-            Prolog();
+            PushExpression();
 
             expressions_.Push(JmesPathHashWildcardProjection);
         }
@@ -209,7 +212,7 @@ namespace DevLab.JmesPath
 
         public void AddMultiSelectHashExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
             System.Diagnostics.Debug.Assert(selectHashes_.Count > 0);
@@ -244,7 +247,7 @@ namespace DevLab.JmesPath
 
         public void AddMultiSelectListExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(selectLists_.Count > 0);
             var expression = expressions_.Pop();
@@ -265,7 +268,7 @@ namespace DevLab.JmesPath
 
         public void OnLiteralString(string literal)
         {
-            Prolog();
+            PushExpression();
 
             var token = JToken.Parse(literal);
             var expression = new JmesPathLiteral(token);
@@ -274,7 +277,7 @@ namespace DevLab.JmesPath
 
         public void OnPipeExpression()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
 
@@ -307,7 +310,7 @@ namespace DevLab.JmesPath
 
         public void AddFunctionArg()
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(functions_.Count > 0);
 
@@ -317,7 +320,7 @@ namespace DevLab.JmesPath
 
         public void OnExpressionType()
         {
-            Prolog();
+            PushExpression();
 
             var expression = expressions_.Pop();
             JmesPathExpression.MakeExpressionType(expression);
@@ -328,7 +331,7 @@ namespace DevLab.JmesPath
 
         public void OnRawString(string value)
         {
-            Prolog();
+            PushExpression();
 
             var expression = new JmesPathRawString(value);
             expressions_.Push(expression);
@@ -336,17 +339,47 @@ namespace DevLab.JmesPath
 
         public void OnCurrentNode()
         {
-            Prolog();
+            PushExpression();
 
             expressions_.Push(new JmesPathCurrentNodeExpression());
         }
 
         #endregion // Expressions
 
+        #region Blocks
+
+        public void OnClosure(string identifier)
+        {
+            System.Diagnostics.Debug.Assert(expression_ != null);
+
+            if (blocks_.Count == 0)
+                blocks_.Push(new JmesPathBlock());
+
+            blocks_.Peek().AddStatement(
+                new JmesPathClosure(identifier, expression_)
+            );
+
+            expression_ = null;
+        }
+
+        #endregion
+
+        private bool PushExpression()
+        {
+            if (expression_ != null)
+            {
+                expressions_.Push(expression_);
+                expression_ = null;
+                return true;
+            }
+
+            return false;
+        }
+
         void PopPush<T>(Func<JmesPathExpression, T> factory)
             where T : JmesPathExpression
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 1);
 
@@ -358,7 +391,7 @@ namespace DevLab.JmesPath
         void PopPush<T>(Func<JmesPathExpression, JmesPathExpression, T> factory)
             where T : JmesPathExpression
         {
-            Prolog();
+            PushExpression();
 
             System.Diagnostics.Debug.Assert(expressions_.Count >= 2);
 

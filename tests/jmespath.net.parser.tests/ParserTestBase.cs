@@ -15,6 +15,7 @@ namespace jmespath.net.parser.tests.Blocks
             var encoding = Encoding.UTF8;
             using (var stream = new MemoryStream(encoding.GetBytes(expression)))
                 Parser.Parse(stream, encoding, generator);
+
             return generator.Root;
         }
     }

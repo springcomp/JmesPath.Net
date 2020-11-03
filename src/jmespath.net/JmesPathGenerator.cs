@@ -182,7 +182,7 @@ namespace DevLab.JmesPath
             PushExpression();
 
             var expression = new JmesPathIdentifier(name);
-            expression.Context = ConsumeBlock();
+            expression.Block = ConsumeBlock();
 
             expressions_.Push(expression);
         }
@@ -358,6 +358,9 @@ namespace DevLab.JmesPath
             blocks_.Peek().AddStatement(
                 new JmesPathClosure(identifier, expression_)
             );
+
+            // TODO: Accept(Visitor)
+            //expression_.Accept();
 
             expression_ = null;
         }

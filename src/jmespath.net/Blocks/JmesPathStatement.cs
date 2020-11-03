@@ -48,7 +48,7 @@ namespace jmespath.net.Blocks
         public override void Execute(JmesPathArgument argument)
         {
             var token = expression_.Transform(argument);
-            // TODO: inject token in context
+            Expression.Context.Add(identifier_, token);
         }
     }
 }

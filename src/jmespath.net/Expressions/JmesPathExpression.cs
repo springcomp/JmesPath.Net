@@ -38,7 +38,7 @@ namespace DevLab.JmesPath.Expressions
                 return new JmesPathArgument(items);
             }
 
-            return Transform(argument.Token);
+            return TransformImpl(argument.Token);
         }
 
         /// <summary>
@@ -46,11 +46,19 @@ namespace DevLab.JmesPath.Expressions
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
+        protected virtual JmesPathArgument TransformImpl(JToken json)
+        {
+            Block?.Execute(json);
+            return Transform(json);
+        }
+
         protected abstract JmesPathArgument Transform(JToken json);
 
         public bool IsExpressionType { get; private set; }
 
-        public JmesPathBlock Context { get; set; }
+        public JmesPathBlock Block { get; set; }
+
+        public IDictionary<string, JmesPathArgument> Context { get; set; }
 
         public static void MakeExpressionType(JmesPathExpression expression)
         {

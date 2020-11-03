@@ -125,7 +125,7 @@ sub_expression		: sub_expression_impl
 					;
 
 sub_expression_impl	: expression T_DOT block_identifier
-					| expression T_DOT multi_select_hash
+					| expression T_DOT block_multi_hash
 					| expression T_DOT multi_select_list
 					| expression T_DOT function_expression
 					| expression T_DOT hash_wildcard
@@ -133,6 +133,10 @@ sub_expression_impl	: expression T_DOT block_identifier
 
 block_identifier    : block identifier
 					| identifier
+					;
+
+block_multi_hash    : block multi_select_hash
+                    | multi_select_hash
 					;
 
 index_expression	: expression bracket_specifier

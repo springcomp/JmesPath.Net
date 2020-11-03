@@ -1,14 +1,52 @@
 [
   {
     "given": {
+      "outer": {
+        "value": "outer",
+        "inner": {
+          "value": "inner",
+          "items": [
+            { "name": "a" },
+            { "name": "b" }
+          ]
+        }
+      }
+    },
+    "cases": [
+      {
+        "expression": "outer.{% outer := value %} inner.{% inner := value %} { scope: 'outer', items: items[].{ scope: 'inner', name: name} }",
+        "result": {
+          "scope": "outer",
+          "items": [
+            {
+              "scope": "inner",
+              "name": "a"
+            },
+            {
+              "scope": "inner",
+              "name": "b"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "given": {
       "items": [
         {
           "id": "123",
-          "children": [ { "name": "a" }, { "name": "b" } ]
+          "children": [
+            { "name": "a" },
+            { "name": "b" }
+          ]
         },
         {
           "id": "321",
-          "children": [ { "name": "c" }, { "name": "d" } ]
+          "children": [
+            { "name": "c" },
+            { "name": "d" }
+          ]
         }
       ]
     },
@@ -16,10 +54,22 @@
       {
         "expression": "items[].{% expression := id %} children[].{ parent: evaluate(`\"expression\"`), name: name }",
         "result": [
-          { "parent": "123", "name": "a" },
-          { "parent": "123", "name": "b" },
-          { "parent": "123", "name": "c" },
-          { "parent": "123", "name": "d" }
+          {
+            "parent": "123",
+            "name": "a"
+          },
+          {
+            "parent": "123",
+            "name": "b"
+          },
+          {
+            "parent": "123",
+            "name": "c"
+          },
+          {
+            "parent": "123",
+            "name": "d"
+          }
         ]
       }
     ]

@@ -15,7 +15,7 @@ namespace DevLab.JmesPath
         /// holds the functions available to the parser
         /// </summary>
         readonly IFunctionRepository repository_;
-
+        private readonly IVisitor visitor_;
         readonly Stack<IDictionary<string, JmesPathExpression>> selectHashes_
             = new Stack<IDictionary<string, JmesPathExpression>>()
             ;
@@ -37,9 +37,10 @@ namespace DevLab.JmesPath
 
         JmesPathExpression expression_;
 
-        public JmesPathGenerator(IFunctionRepository repository)
+        public JmesPathGenerator(IFunctionRepository repository, IVisitor visitor)
         {
             repository_ = repository;
+            visitor_ = visitor;
         }
 
         public JmesPathExpression Expression => expression_;
@@ -359,9 +360,7 @@ namespace DevLab.JmesPath
                 new JmesPathClosure(identifier, expression_)
             );
 
-            // TODO: Accept(Visitor)
-            //expression_.Accept();
-
+            expression_.Accept(visitor_);
             expression_ = null;
         }
 

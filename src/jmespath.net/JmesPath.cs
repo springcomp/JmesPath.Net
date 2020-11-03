@@ -86,7 +86,7 @@ namespace DevLab.JmesPath
 
         public Expression Parse(Stream stream)
         {
-            var analyzer = new JmesPathGenerator(repository_);
+            var analyzer = new JmesPathGenerator(repository_, new ContextInjectionVisitor(context_));
             Parser.Parse(stream, _encoding, analyzer);
 
             // perform post-parsing syntax validation
@@ -118,24 +118,40 @@ namespace DevLab.JmesPath
             }
         }
 
-        private sealed class SyntaxVisitor : IVisitor
+        private sealed class SyntaxVisitor : ContextInjectionVisitor
         {
-            private readonly IDictionary<string, JmesPathArgument> context_;
-
             public SyntaxVisitor(IDictionary<string, JmesPathArgument> context)
+                : base(context)
             {
-                context_ = context;
             }
 
             public void Visit(JmesPathExpression expression)
             {
-                expression.Context = context_;
+                base.Visit(expression);
 
                 // parse slice projection
 
                 var projection = expression as JmesPathSliceProjection;
                 if (projection?.Step != null && projection.Step.Value == 0)
                     throw new Exception("Error: invalid-value, a slice projection step cannot be 0.");
+            }
+        }
+
+        private class ContextInjectionVisitor : IVisitor
+        {
+            private readonly IDictionary<string, JmesPathArgument> context_;
+
+            public ContextInjectionVisitor(IDictionary<string, JmesPathArgument> context)
+            {
+                context_ = context;
+            }
+
+            protected IDictionary<string, JmesPathArgument> Context
+                => context_;
+
+            public virtual void Visit(JmesPathExpression expression)
+            {
+                expression.Context = context_;
             }
         }
     }

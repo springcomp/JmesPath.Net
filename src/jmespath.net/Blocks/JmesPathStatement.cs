@@ -48,6 +48,7 @@ namespace jmespath.net.Blocks
         public override void Execute(JmesPathArgument argument)
         {
             var token = expression_.Transform(argument);
+            // TODO: Contains ?
             Expression.Context.Add(identifier_, token);
         }
     }

@@ -232,6 +232,12 @@ namespace DevLab.JmesPath
             generator_.OnClosure((string)token.Value);
         }
 
+        public void OpenBraceContext()
+            => generator_.OpenBraceContext();
+
+        public void CloseBraceContext()
+            => generator_.CloseBraceContext();
+
         #endregion
     }
 }

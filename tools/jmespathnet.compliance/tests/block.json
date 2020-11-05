@@ -1,49 +1,6 @@
 [
   {
     "given": {
-      "items": [
-        {
-          "id": "123",
-          "children": [
-            { "name": "a" },
-            { "name": "b" }
-          ]
-        },
-        {
-          "id": "321",
-          "children": [
-            { "name": "c" },
-            { "name": "d" }
-          ]
-        }
-      ]
-    },
-    "cases": [
-      {
-        "expression": "items[].{% expression := id %} children[].{ parent: evaluate(`\"expression\"`), name: name }",
-        "result": [
-          {
-            "parent": "123",
-            "name": "a"
-          },
-          {
-            "parent": "123",
-            "name": "b"
-          },
-          {
-            "parent": "123",
-            "name": "c"
-          },
-          {
-            "parent": "123",
-            "name": "d"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "given": {
       "outer": {
         "value": "outer",
         "inner": {
@@ -57,7 +14,7 @@
     },
     "cases": [
       {
-        "expression": "outer.{% outer := value %} inner.{% inner := value %} { scope: 'outer', items: items[].{ scope: 'inner', name: name} }",
+        "expression": "outer.{% outer := value %} inner.{% inner := value %} { scope: 'outer', items: items[].{ scope: 'inner', name: name } }",
         "result": {
           "scope": "outer",
           "items": [

@@ -279,10 +279,23 @@ hash_wildcard		: T_STAR
 					}
 					;
 
-multi_select_hash	: T_LBRACE keyval_expressions T_RBRACE
+multi_select_hash	: l_brace keyval_expressions r_brace
 					{
 						PopMultiSelectHash();
-					};
+					}
+					;
+
+l_brace             : T_LBRACE
+                    {
+						OpenBraceContext();
+					}
+					;
+
+r_brace				: T_RBRACE
+					{
+						CloseBraceContext();
+					}
+					;
 
 keyval_expressions	: keyval_expression
 					{

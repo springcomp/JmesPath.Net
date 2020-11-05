@@ -50,5 +50,7 @@
         void OnPipeExpression();
 
         void OnClosure(string name);
+        void OpenBraceContext();
+        void CloseBraceContext();
     }
 }

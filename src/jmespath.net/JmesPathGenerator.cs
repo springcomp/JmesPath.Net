@@ -31,8 +31,12 @@ namespace DevLab.JmesPath
             = new Stack<JmesPathExpression>()
             ;
 
-        readonly Stack<JmesPathBlock> blocks_
+        Stack<JmesPathBlock> blocks_
             = new Stack<JmesPathBlock>()
+            ;
+
+        Stack<Stack<JmesPathBlock>> protected_
+            = new Stack<Stack<JmesPathBlock>>()
             ;
 
         JmesPathExpression expression_;
@@ -82,7 +86,7 @@ namespace DevLab.JmesPath
 
             var expression = new JmesPathSubExpression(left, right);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         #region index_expression
@@ -93,7 +97,7 @@ namespace DevLab.JmesPath
 
             var expression = new JmesPathIndex(index);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void OnFilterProjection()
@@ -105,21 +109,21 @@ namespace DevLab.JmesPath
             var comparison = expressions_.Pop();
             var expression = new JmesPathFilterProjection(comparison);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void OnFlattenProjection()
         {
             PushExpression();
 
-            expressions_.Push(new JmesPathFlattenProjection());
+            ConsumeBlockAndPushExpression(new JmesPathFlattenProjection());
         }
 
         public void OnListWildcardProjection()
         {
             PushExpression();
 
-            expressions_.Push(new JmesPathListWildcardProjection());
+            ConsumeBlockAndPushExpression(new JmesPathListWildcardProjection());
         }
 
         public void OnIndexExpression()
@@ -133,7 +137,7 @@ namespace DevLab.JmesPath
 
             var expression = new JmesPathIndexExpression(left, right);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void OnSliceExpression(int? start, int? stop, int? step)
@@ -142,7 +146,7 @@ namespace DevLab.JmesPath
 
             var sliceExpression = new JmesPathSliceProjection(start, stop, step);
 
-            expressions_.Push(sliceExpression);
+            ConsumeBlockAndPushExpression(sliceExpression);
         }
 
         #endregion
@@ -181,11 +185,7 @@ namespace DevLab.JmesPath
         public void OnIdentifier(string name)
         {
             PushExpression();
-
-            var expression = new JmesPathIdentifier(name);
-            expression.Block = ConsumeBlock();
-
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(new JmesPathIdentifier(name));
         }
 
         private JmesPathBlock ConsumeBlock()
@@ -201,7 +201,7 @@ namespace DevLab.JmesPath
         {
             PushExpression();
 
-            expressions_.Push(JmesPathHashWildcardProjection);
+            ConsumeBlockAndPushExpression(JmesPathHashWildcardProjection);
         }
 
         #region multi_select_hash
@@ -234,7 +234,7 @@ namespace DevLab.JmesPath
             System.Diagnostics.Debug.Assert(selectHashes_.Count > 0);
             var items = selectHashes_.Pop();
             var expression = new JmesPathMultiSelectHash(items);
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         #endregion
@@ -262,7 +262,7 @@ namespace DevLab.JmesPath
             var items = selectLists_.Pop();
             var expression = new JmesPathMultiSelectList(items);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         #endregion
@@ -273,7 +273,7 @@ namespace DevLab.JmesPath
 
             var token = JToken.Parse(literal);
             var expression = new JmesPathLiteral(token);
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void OnPipeExpression()
@@ -287,7 +287,7 @@ namespace DevLab.JmesPath
 
             var expression = new JmesPathPipeExpression(left, right);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         #region function_expression
@@ -306,7 +306,7 @@ namespace DevLab.JmesPath
 
             var expression = new JmesPathFunctionExpression(repository_, name, expressions);
 
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void AddFunctionArg()
@@ -325,7 +325,7 @@ namespace DevLab.JmesPath
 
             var expression = expressions_.Pop();
             JmesPathExpression.MakeExpressionType(expression);
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         #endregion
@@ -335,14 +335,14 @@ namespace DevLab.JmesPath
             PushExpression();
 
             var expression = new JmesPathRawString(value);
-            expressions_.Push(expression);
+            ConsumeBlockAndPushExpression(expression);
         }
 
         public void OnCurrentNode()
         {
             PushExpression();
 
-            expressions_.Push(new JmesPathCurrentNodeExpression());
+            ConsumeBlockAndPushExpression(new JmesPathCurrentNodeExpression());
         }
 
         #endregion // Expressions
@@ -364,7 +364,23 @@ namespace DevLab.JmesPath
             expression_ = null;
         }
 
+        public void OpenBraceContext()
+        {
+            protected_.Push(blocks_);
+            blocks_ = new Stack<JmesPathBlock>();
+        }
+        public void CloseBraceContext()
+        {
+            blocks_ = protected_.Pop();
+        }
+
         #endregion
+
+        private void ConsumeBlockAndPushExpression(JmesPathExpression expression)
+        {
+            expression.Block = ConsumeBlock();
+            expressions_.Push(expression);
+        }
 
         private bool PushExpression()
         {

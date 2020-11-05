@@ -49,6 +49,8 @@ namespace jmespath.net.Blocks
         {
             var token = expression_.Transform(argument);
             // TODO: Contains ?
+            if (Expression.Context.ContainsKey(identifier_))
+                Expression.Context.Remove(identifier_);
             Expression.Context.Add(identifier_, token);
         }
     }

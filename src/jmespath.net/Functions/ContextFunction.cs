@@ -8,21 +8,20 @@ namespace DevLab.JmesPath.Functions
 {
     public abstract class JmesPathContextFunction : JmesPathFunction
     {
-        private readonly IDictionary<string, JmesPathArgument> context_;
-        protected JmesPathContextFunction(string name, IDictionary<string, JmesPathArgument> context, int count)
+        
+        protected JmesPathContextFunction(string name, int count)
             : base(name, count)
         {
-            context_ = context;
+        
         }
 
-        protected IDictionary<string, JmesPathArgument> Context
-            => context_;
+      
     }
 
     public sealed class EvaluateExpressionFunction : JmesPathContextFunction
     {
-        public EvaluateExpressionFunction(IDictionary<string, JmesPathArgument> context)
-            : base("evaluate", context, 1)
+        public EvaluateExpressionFunction()
+            : base("evaluate", 1)
         {
         }
 
@@ -33,8 +32,9 @@ namespace DevLab.JmesPath.Functions
 
             var name = args[0].Token.Value<string>();
 
-            var result = Context[name];
-
+            if(Context.ContainsKey(name))
+                return Context[name].Token;
+            
             return JTokens.Null;
         }
     }

@@ -33,7 +33,7 @@ namespace DevLab.JmesPath
                 repository_.Register(name, JmesPathFunctionFactory.Default[name]);
 
             context_ = new Dictionary<string, JmesPathArgument>();
-            var evaluateFunc = new EvaluateExpressionFunction(context_);
+            var evaluateFunc = new EvaluateExpressionFunction();
             repository_.Register(evaluateFunc.Name, evaluateFunc);
         }
 
@@ -69,11 +69,11 @@ namespace DevLab.JmesPath
             public string Transform(string document)
             {
                 var token = ParseJson(document);
-                var result = Transform(token);
+                var result = OnTransform(token);
                 return result.AsJToken()?.AsString();
             }
 
-            protected override JmesPathArgument Transform(JToken json)
+            protected override JmesPathArgument OnTransform(JmesPathArgument json)
             {
                 return expression_.Transform(json);
             }

@@ -5,7 +5,7 @@ namespace DevLab.JmesPath.Expressions
 {
     public class JmesPathCurrentNodeExpression : JmesPathExpression
     {
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             return json;
         }

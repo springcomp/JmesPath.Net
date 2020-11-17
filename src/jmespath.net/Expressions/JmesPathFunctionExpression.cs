@@ -52,7 +52,7 @@ namespace DevLab.JmesPath.Expressions
 
         public JToken Name => name_;
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             var arguments = expressions_.Select(
                 expression =>
@@ -66,7 +66,7 @@ namespace DevLab.JmesPath.Expressions
                 ;
 
             function_.Validate(arguments);
-
+            function_.Context = json.Context;
             return function_.Execute(arguments);
         }
     }

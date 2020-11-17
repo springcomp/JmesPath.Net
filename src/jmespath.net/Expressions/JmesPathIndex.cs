@@ -16,12 +16,12 @@ namespace DevLab.JmesPath.Expressions
             index_ = index;
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
-            if (json.Type != JTokenType.Array)
+            if (json.Token.Type != JTokenType.Array)
                 return null;
 
-            var array = json as JArray;
+            var array = json.Token as JArray;
             if (array == null)
                 return null;
 

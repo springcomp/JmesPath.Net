@@ -16,7 +16,7 @@ namespace DevLab.JmesPath.Expressions
                 dictionary_.Add(key, dictionary[key]);
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             var properties = new List<JProperty>();
 

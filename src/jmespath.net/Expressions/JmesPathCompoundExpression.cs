@@ -34,7 +34,7 @@ namespace DevLab.JmesPath.Expressions
         protected JmesPathExpression Right
             => right_;
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             var token = left_.Transform(json);
             return token == JmesPathArgument.Null ? token : right_.Transform(token);

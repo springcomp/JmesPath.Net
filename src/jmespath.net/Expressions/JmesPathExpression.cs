@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using DevLab.JmesPath.Interop;
 using DevLab.JmesPath.Utils;
 using jmespath.net.Blocks;
@@ -28,7 +30,10 @@ namespace DevLab.JmesPath.Expressions
                 var items = new List<JmesPathArgument>();
                 foreach (var projected in argument.Projection)
                 {
+
                     var item = Transform(projected);
+                  
+
                     if (item.IsProjection)
                         items.Add(item);
                     else if (item.Token != JTokens.Null)
@@ -38,7 +43,7 @@ namespace DevLab.JmesPath.Expressions
                 return new JmesPathArgument(items);
             }
 
-            return TransformImpl(argument.Token);
+            return TransformImpl(argument);
         }
 
         /// <summary>
@@ -46,13 +51,21 @@ namespace DevLab.JmesPath.Expressions
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
-        protected virtual JmesPathArgument TransformImpl(JToken json)
+        protected virtual JmesPathArgument TransformImpl(JmesPathArgument json)
         {
             Block?.Execute(json);
-            return Transform(json);
+            var result =  OnTransform(json);
+
+            //Copy Context 
+            foreach(var k in json.Context)
+            {
+                if(!result.Context.ContainsKey(k.Key))
+                    result.Context.Add(k.Key, k.Value);
+            }
+            return result;
         }
 
-        protected abstract JmesPathArgument Transform(JToken json);
+        protected abstract JmesPathArgument OnTransform(JmesPathArgument json);
 
         public bool IsExpressionType { get; private set; }
 

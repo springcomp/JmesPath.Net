@@ -19,7 +19,7 @@ namespace DevLab.JmesPath.Expressions
         protected JmesPathExpression Expression
             => expression_;
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             return expression_.Transform(json);
         }

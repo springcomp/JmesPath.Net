@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DevLab.JmesPath.Expressions;
 using DevLab.JmesPath.Utils;
 using Newtonsoft.Json.Linq;
 
@@ -19,6 +22,7 @@ namespace DevLab.JmesPath.Functions
             MinArgumentCount = minCount;
             Variadic = variadic;
         }
+        public IDictionary<string, JmesPathArgument> Context { get; set; }
 
         public string Name { get; private set; }
 

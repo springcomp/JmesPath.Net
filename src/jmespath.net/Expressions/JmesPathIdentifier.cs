@@ -14,9 +14,9 @@ namespace DevLab.JmesPath.Expressions
 
         public string Name => name_;
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
-            var jsonObject = json as JObject;
+            var jsonObject = json.Token as JObject;
             return jsonObject?[name_];
         }
     }

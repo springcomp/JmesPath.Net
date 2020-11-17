@@ -14,9 +14,9 @@ namespace DevLab.JmesPath.Expressions
         {
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
-            var token = base.Transform(json);
+            var token = base.OnTransform(json.Token);
             return JmesPathArgument.IsFalse(token) 
                 ? JmesPathArgument.True
                 : JmesPathArgument.False

@@ -18,7 +18,7 @@ namespace DevLab.JmesPath.Expressions
         {
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             // stop projections after
             // evaluating the left expression

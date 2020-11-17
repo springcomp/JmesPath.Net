@@ -14,10 +14,14 @@ namespace DevLab.JmesPath.Expressions
         public static JmesPathArgument True = new JmesPathArgument(JTokens.True);
         public static JmesPathArgument False = new JmesPathArgument(JTokens.False);
 
+        public IDictionary<string, JmesPathArgument> Context { get; set; }
+
         public JmesPathArgument(JToken token)
         {
             Token = token ?? JTokens.Null;
             Projection = null;
+
+            Context   = new Dictionary<String, JmesPathArgument>();
         }
 
         public JmesPathArgument(IEnumerable<JmesPathArgument> projection)
@@ -25,6 +29,7 @@ namespace DevLab.JmesPath.Expressions
             Token = null;
             Debug.Assert(projection != null);
             Projection = projection.ToArray();
+            Context = new Dictionary<String, JmesPathArgument>();
         }
 
         public bool IsProjection

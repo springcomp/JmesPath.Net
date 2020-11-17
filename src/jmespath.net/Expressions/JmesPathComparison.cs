@@ -17,7 +17,7 @@ namespace DevLab.JmesPath.Expressions
 
         protected abstract bool? Compare(JToken left, JToken right);
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             var left = Left.Transform(json).AsJToken();
             var right = Right.Transform(json).AsJToken();

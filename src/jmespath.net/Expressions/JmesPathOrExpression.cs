@@ -11,7 +11,7 @@ namespace DevLab.JmesPath.Expressions
             expression_ = expression;
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             return expression_.Transform(json);
         }
@@ -30,7 +30,7 @@ namespace DevLab.JmesPath.Expressions
         {
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        protected override JmesPathArgument OnTransform(JmesPathArgument json)
         {
             var token = Left.Transform(json);
             return !JmesPathArgument.IsFalse(token) ? token : Right.Transform(json);

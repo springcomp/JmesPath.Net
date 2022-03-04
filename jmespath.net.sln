@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jmespath.lexer.tests", "tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jmespath.parser", "src\jmespath.parser\jmespath.parser.csproj", "{04520B98-5B6E-4DA9-B5C5-701AC123DD0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "jpnet", "tools\jpnet\jpnet.csproj", "{4F2BFBEA-D4D6-4064-9D9D-3881D5463152}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{04520B98-5B6E-4DA9-B5C5-701AC123DD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04520B98-5B6E-4DA9-B5C5-701AC123DD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04520B98-5B6E-4DA9-B5C5-701AC123DD0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152}.Release|Any CPU.Build.0 = Release|Any CPU		
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +94,7 @@ Global
 		{5AF3F01C-770A-4A34-BE0A-3C93E419FF38} = {6D7773F3-76FA-4E25-A85C-7AA1AD5668D8}
 		{C83EF538-C405-4C1F-8FF0-0EF975121611} = {17EC0D83-06FD-45A9-87CE-5A6901204774}
 		{04520B98-5B6E-4DA9-B5C5-701AC123DD0E} = {6D7773F3-76FA-4E25-A85C-7AA1AD5668D8}
+		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152} = {CF8C1543-B634-47F5-BF43-4508F64E0554}		
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {759AACA1-7B3D-4EA9-AAC6-CA9150656A98}

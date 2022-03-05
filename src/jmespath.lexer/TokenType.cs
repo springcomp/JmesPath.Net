@@ -1,5 +1,7 @@
 ﻿namespace jmespath.lexer;
 public enum TokenType {
+    E_UNRECOGNIZED = 0,
+    T_WHITESPACE = 1,
     error=2,
     EOF=3,
     T_AND=4,

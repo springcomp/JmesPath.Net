@@ -1,5 +1,4 @@
 ﻿namespace jmespath.lexer.StateMachines;
-
 public sealed class UnquotedString : StateMachine
 {
     private static readonly int[,] state_translation_table_ = new int[,]

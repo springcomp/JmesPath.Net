@@ -50,6 +50,9 @@ public sealed class Scanner
 
         // recognize complex patterns
 
+        if (TryRecognizeLiteralString(c, out var t_lstring))
+            return t_lstring;
+
         if (TryRecognizeUnquotedString(c, out var t_ustring))
             return t_ustring;
 
@@ -106,27 +109,23 @@ public sealed class Scanner
             else if (token.RawText == "[?")
                 token = Token.Create(TokenType.T_FILTER, token.RawText);
 
-            //if (position_ < input_.Length - 1)
-            //{
-            //    var nextChar = input_[position_ + 1];
-            //    switch (nextChar)
-            //    {
-            //        case ']':
-            //            token = Consume(TokenType.T_FLATTEN, "[]");
-            //            return true;
-            //        case '?':
-            //            token = Consume(TokenType.T_FILTER, "[?");
-            //            return true;
-            //    }
-            //}
-
-            //token = Consume(TokenType.T_LBRACKET, "[");
             return true;
         }
 
         return false;
     }
 
+    private bool TryRecognizeLiteralString(char c, out Token token)
+    {
+        token = T_EOF;
+
+        if (c == '`')
+        {
+            token = GetNextToken(TokenType.T_LSTRING);
+            return true;
+        }
+        return false;
+    }
     private bool TryRecognizeUnquotedString(char c, out Token token)
     {
         token = T_EOF;
@@ -240,6 +239,7 @@ public sealed class Scanner
 
     // matches T_USTRING token
 
+    private readonly StateMachine literalString_ = new LiteralString();
     private readonly StateMachine unquotedString_ = new UnquotedString();
 
     // state machine, if any, associated with any token type
@@ -271,7 +271,7 @@ public sealed class Scanner
             /* T_CURRENT    @ */ null,
             /* T_ETYPE      & */ etype_,
             /* T_NUMBER       */ null,
-            /* T_LSTRING      */ null,
+            /* T_LSTRING      */ literalString_,
             /* T_QSTRING      */ null,
             /* T_RSTRING      */ null,
             /* T_USTRING      */ unquotedString_,

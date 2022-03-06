@@ -10,7 +10,7 @@ public class TransitionTableMachine : StateMachine
         int acceptingState,
         int[] classes,
         int[,] transitionTable
-    ) : this (
+    ) : this(
         initialState,
         new int[] { acceptingState },
         classes,
@@ -23,7 +23,7 @@ public class TransitionTableMachine : StateMachine
         int[] acceptingStates,
         int[] classes,
         int[,] transitionTable
-    ) : base (
+    ) : base(
         initialState,
         acceptingStates,
         null!
@@ -36,15 +36,20 @@ public class TransitionTableMachine : StateMachine
     }
     private int GetNextState(int state, char input)
     {
-        var ascii = 32 + (input - ' ');
-        if (ascii >= classes_.Length)
-            return __;
-
-        var characterClass = classes_[ascii];
+        var characterClass = GetCharacterClass(input);
         if (characterClass == __)
             return __;
 
         return state_transition_table_[state, characterClass];
+    }
+
+    protected virtual int GetCharacterClass(char input)
+    { 
+        var ascii = 32 + (input - ' ');
+        if (ascii >= classes_.Length)
+            return __;
+
+        return classes_[ascii];
     }
 }
 

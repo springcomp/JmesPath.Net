@@ -6,19 +6,6 @@ namespace jmespath.lexer.tests;
 public class StateMachineTest
 {
     [Fact]
-    public void StateMachine_Run_Whitespace()
-    {
-        var machine = new Whitespace();
-
-        AssertMatch(machine.Match(" "), " ");
-        AssertMatch(machine.Match("\b"), "\b");
-        AssertMatch(machine.Match("\f"), "\f");
-        AssertMatch(machine.Match("\n"), "\n");
-        AssertMatch(machine.Match("\r"), "\r");
-        AssertMatch(machine.Match("\t"), "\t");
-    }
-
-    [Fact]
     public void StateMachine_Run_UnquotedString()
     {
         var machine = new UnquotedString();

@@ -1,11 +1,11 @@
 ﻿namespace jmespath.lexer.StateMachines;
-public sealed class UnquotedString : StateMachine
+public sealed class UnquotedString : TransitionTableMachine
 {
-    private static readonly int[,] state_translation_table_ = new int[,]
+    private static readonly int[,] state_transition_table_ = new int[,]
     {
-        /*         L   D   U
-        /* 0 */ {  1, __,  1 },
-        /* 1 */ {  1,  1,  1 },
+        /*         CL  CD  CU
+        /* 0  */ {  1, __,  1 },
+        /* 1+ */ {  1,  1,  1 },
     };
 
     private const int CL = 0; // [A-Za-z]
@@ -34,19 +34,14 @@ public sealed class UnquotedString : StateMachine
            CL, CL, CL, __, __, __, __, __,
     };
 
+    /// <summary>
+    /// Initialize a new instance of the <see cref="UnquotedString"/> class
+    /// Matches:
+    ///     T_USTRING [A-Za-z_][A-Za-z0-9_]+
+    /// </summary>
     public UnquotedString()
-        : base(0, 1, GetNextState)
+        : base(0, 1, classes, state_transition_table_)
     {
-    }
-
-    private static int GetNextState(int state, char input)
-    {
-        var ascii = 32 + (input - ' ');
-        var characterClass = classes[ascii];
-        if (characterClass == __)
-            return __;
-
-        return state_translation_table_[state, characterClass];
     }
 }
 

@@ -6,7 +6,7 @@ public class StateMachine
 
     private readonly int initialState_;
     private readonly int[] acceptingStates_;
-    private readonly Func<int, char, int> nextState_;
+    protected Func<int, char, int>? nextState_ = null;
 
     public StateMachine(
         int initialState,

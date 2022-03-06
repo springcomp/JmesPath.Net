@@ -33,6 +33,7 @@ public enum TokenType {
     T_RBRACKET=30,
     T_LPAREN=31,
     T_RPAREN=32,
-    T_LISTWILDCARD=33
+
+    T_MAX = 33,
 };
 

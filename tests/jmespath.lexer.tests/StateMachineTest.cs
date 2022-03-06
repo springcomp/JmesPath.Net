@@ -6,16 +6,17 @@ namespace jmespath.lexer.tests;
 public class StateMachineTest
 {
     [Fact]
-    public void StateMachine_Run_Whitespace()
+    public void StateMachine_Run_Bracket()
     {
-        var machine = new Whitespace();
+        var machine = new BracketToken();
 
-        AssertMatch(machine.Match(" "), " ");
-        AssertMatch(machine.Match("\b"), "\b");
-        AssertMatch(machine.Match("\f"), "\f");
-        AssertMatch(machine.Match("\n"), "\n");
-        AssertMatch(machine.Match("\r"), "\r");
-        AssertMatch(machine.Match("\t"), "\t");
+        AssertMatch(machine.Match("["), "[");
+        AssertMatch(machine.Match("[]"), "[]");
+        AssertMatch(machine.Match("[?"), "[?");
+
+        AssertMatch(machine.Match("[ ?"), "[");
+
+        AssertMatch(machine.Match("] ?"), null);
     }
 
     [Fact]

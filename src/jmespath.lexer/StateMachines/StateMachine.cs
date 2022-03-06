@@ -6,7 +6,7 @@ public class StateMachine
 
     private readonly int initialState_;
     private readonly int[] acceptingStates_;
-    private readonly Func<int, char, int> nextState_;
+    protected Func<int, char, int>? nextState_ = null;
 
     public StateMachine(
         int initialState,
@@ -32,6 +32,10 @@ public class StateMachine
 
     public Match Match(ReadOnlySpan<Char> input)
     {
+        System.Diagnostics.Debug.Assert(nextState_ != null);
+
+        Reset();
+
         var currentState = initialState_;
 
         int i = 0;
@@ -39,7 +43,7 @@ public class StateMachine
         for (var length = input.Length; i < length; ++i)
         {
             var character = input[i];
-            var nextState = nextState_(currentState, character);
+            var nextState = nextState_!(currentState, character);
 
             if (nextState == __)
                 break;
@@ -61,6 +65,8 @@ public class StateMachine
     public bool Run(string input)
         => Match(input).Success;
 
+    protected virtual void Reset()
+    { }
 }
 
 public sealed class Match

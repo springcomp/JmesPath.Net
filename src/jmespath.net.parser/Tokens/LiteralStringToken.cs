@@ -44,5 +44,17 @@ namespace DevLab.JmesPath.Tokens
         }
 
         public override object Value => value_;
+        private static string UnescapeLiteral(string rawText)
+        {
+            // first, remove the surrounding double-quotes
+
+            var text = rawText.Substring(1, rawText.Length - 2);
+
+            // finally, process the common escape sequences
+
+            return text
+                .Replace("\\`", "`")
+                ;
+        }
     }
 }

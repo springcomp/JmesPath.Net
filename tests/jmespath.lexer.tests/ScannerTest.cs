@@ -5,18 +5,6 @@ namespace jmespath.lexer.tests;
 public class ScannerTest
 {
     [Fact]
-    public void Scanner_GetNextToken_Identifier()
-    {
-        var scanner = new Scanner("foo");
-        var actual = scanner.GetNextToken();
-
-        Assert.Equal(TokenType.T_USTRING, actual.Type);
-        Assert.Equal("foo", actual.RawText);
-
-        Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
-    }
-
-    [Fact]
     public void Scanner_Trim()
     {
         var scanner = new Scanner(" \b\f\r\n\tfoo");
@@ -91,6 +79,31 @@ public class ScannerTest
         };
 
         AssertTokens(scanner, results);
+        Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
+    }
+
+    [Fact]
+    public void Scanner_GetNextToken_LiteralString()
+    {
+        var scanner = new Scanner("`{\"foo\": \"bar\\`baz\"}`");
+        var actual = scanner.GetNextToken();
+
+        Assert.Equal(TokenType.T_LSTRING, actual.Type);
+        Assert.Equal("`{\"foo\": \"bar\\`baz\"}`", actual.RawText);
+        Assert.Equal("{\"foo\": \"bar`baz\"}", (string) actual.Value);
+
+        Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
+    }
+
+    [Fact]
+    public void Scanner_GetNextToken_UnquotedString()
+    {
+        var scanner = new Scanner("foo");
+        var actual = scanner.GetNextToken();
+
+        Assert.Equal(TokenType.T_USTRING, actual.Type);
+        Assert.Equal("foo", actual.RawText);
+
         Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
     }
 

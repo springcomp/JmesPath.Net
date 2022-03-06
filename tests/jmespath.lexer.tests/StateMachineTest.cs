@@ -32,6 +32,17 @@ public class StateMachineTest
     }
 
     [Fact]
+    public void StateMachine_Run_LiteralString()
+    {
+        var machine = new LiteralString();
+
+        AssertMatch(machine.Match("`hello`"), "`hello`");
+        AssertMatch(machine.Match("`hello`.world"), "`hello`");
+        AssertMatch(machine.Match("`hello\\` world!`"), "`hello\\` world!`");
+
+        AssertMatch(machine.Match("foo"), null);
+    }
+    [Fact]
     public void StateMachine_Run_UnquotedString()
     {
         var machine = new UnquotedString();

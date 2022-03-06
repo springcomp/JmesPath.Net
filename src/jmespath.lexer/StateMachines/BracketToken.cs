@@ -14,7 +14,7 @@ public sealed class BracketToken : TransitionTableMachine
     private const int CR = 1; // ]
     private const int CQ = 2; // ?
 
-    private static readonly int[] classes = new int[128] {
+    private static readonly int[] classes = new int[96] {
            __, __, __, __, __, __, __, __,
            __, __, __, __, __, __, __, __,
            __, __, __, __, __, __, __, __,
@@ -29,11 +29,6 @@ public sealed class BracketToken : TransitionTableMachine
            __, __, __, __, __, __, __, __,
            __, __, __, __, __, __, __, __,
            __, __, __, CL, __, CR, __, __,
-
-           __, __, __, __, __, __, __, __,
-           __, __, __, __, __, __, __, __,
-           __, __, __, __, __, __, __, __,
-           __, __, __, __, __, __, __, __,
     };
 
     /// <summary>

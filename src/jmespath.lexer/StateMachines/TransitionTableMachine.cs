@@ -37,6 +37,9 @@ public class TransitionTableMachine : StateMachine
     private int GetNextState(int state, char input)
     {
         var ascii = 32 + (input - ' ');
+        if (ascii >= classes_.Length)
+            return __;
+
         var characterClass = classes_[ascii];
         if (characterClass == __)
             return __;

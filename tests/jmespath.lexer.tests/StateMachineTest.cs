@@ -43,6 +43,25 @@ public class StateMachineTest
         AssertMatch(machine.Match("foo"), null);
     }
     [Fact]
+    public void StateMachine_Run_QuotedString()
+    {
+        var machine = new QuotedString();
+
+        AssertMatch(machine.Match("\"hello, world!\""), "\"hello, world!\"");
+
+        AssertMatch(machine.Match("\"hello\\\"world!\\\"\""), "\"hello\\\"world!\\\"\"");
+        AssertMatch(machine.Match("\"hello\\\\world\""), "\"hello\\\\world\"");
+        AssertMatch(machine.Match("\"hello\\/world\""), "\"hello\\/world\"");
+        AssertMatch(machine.Match("\"hello\\bworld\""), "\"hello\\bworld\"");
+        AssertMatch(machine.Match("\"hello\\fworld\""), "\"hello\\fworld\"");
+        AssertMatch(machine.Match("\"hello\\nworld\""), "\"hello\\nworld\"");
+        AssertMatch(machine.Match("\"hello\\rworld\""), "\"hello\\rworld\"");
+        AssertMatch(machine.Match("\"hello\\tworld\""), "\"hello\\tworld\"");
+        AssertMatch(machine.Match("\"Are you \\u2713 ?\""), "\"Are you \\u2713 ?\"");
+
+        AssertMatch(machine.Match("\"\""), null); // empty string is forbidden
+    }
+    [Fact]
     public void StateMachine_Run_UnquotedString()
     {
         var machine = new UnquotedString();

@@ -1,4 +1,5 @@
-﻿using JsonCheckerTool;
+﻿using jmespath.lexer.Utils;
+using JsonCheckerTool;
 
 namespace jmespath.lexer.Tokens;
 internal class LiteralStringToken : Token
@@ -12,7 +13,7 @@ internal class LiteralStringToken : Token
         System.Diagnostics.Debug.Assert(rawText.StartsWith("`"));
         System.Diagnostics.Debug.Assert(rawText.EndsWith("`"));
 
-        var literal = UnescapeLiteral(rawText);
+        var literal = StringUtil.UnescapeLiteral(rawText);
         var checker = new JsonChecker();
         var lws = true;
         var scalar = false;
@@ -44,18 +45,4 @@ internal class LiteralStringToken : Token
     }
 
     public override object Value => value_;
-
-    private static string UnescapeLiteral(string rawText)
-    {
-        // first, remove the surrounding double-quotes
-
-        var text = rawText.Substring(1, rawText.Length - 2);
-
-        // finally, process the common escape sequences
-
-        return text
-            .Replace("\\`", "`")
-
-            ;
-    }
 }

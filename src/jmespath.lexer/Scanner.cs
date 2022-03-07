@@ -42,19 +42,16 @@ public sealed class Scanner
             return t_oneOrTwoChar;
 
         // recognizes two-char tokens
-        // this uses a state machine that recognizes unambiguous two-character tokens
-        // i.e one of ==, [], [?
+        // this uses a state machine that recognizes ambiguous one- or two-char tokens
+        // i.e one of [, [], [?
 
         if (TryRecognizeTwoCharacterToken(c, out var t_twoChar))
             return t_twoChar;
 
         // recognize complex patterns
 
-        if (TryRecognizeLiteralString(c, out var t_lstring))
-            return t_lstring;
-
-        if (TryRecognizeUnquotedString(c, out var t_ustring))
-            return t_ustring;
+        if (TryRecognizeToken(c, out var token))
+            return token;
 
         return T_EOF;
     }
@@ -94,13 +91,7 @@ public sealed class Scanner
     {
         token = T_EOF;
 
-        if (c == '=')
-        {
-            token = GetNextToken(TokenType.T_EQ);
-            return token.Type == TokenType.T_EQ;
-        }
-
-        else if (c == '[')
+        if (c == '[')
         {
             token = GetNextToken(TokenType.T_LBRACKET);
 
@@ -112,29 +103,6 @@ public sealed class Scanner
             return true;
         }
 
-        return false;
-    }
-
-    private bool TryRecognizeLiteralString(char c, out Token token)
-    {
-        token = T_EOF;
-
-        if (c == '`')
-        {
-            token = GetNextToken(TokenType.T_LSTRING);
-            return true;
-        }
-        return false;
-    }
-    private bool TryRecognizeUnquotedString(char c, out Token token)
-    {
-        token = T_EOF;
-
-        if (Char.IsAscii(c) && Char.IsLetter(c))
-        {
-            token = GetNextToken(TokenType.T_USTRING);
-            return true;
-        }
         return false;
     }
 
@@ -164,6 +132,41 @@ public sealed class Scanner
         }
     }
 
+    private bool TryRecognizeToken(char c, out Token token)
+    {
+        (Func<char, bool> Condition, TryRecognizeTokenDelegate Recognizer)[]
+            dispatchers = new (Func<char, bool>, TryRecognizeTokenDelegate)[] {
+                (cc => cc == '=', TryRecognizeEqualSign),
+                (cc => cc == '`', TryRecognizeLiteralString),
+                (cc => cc == '"', TryRecognizeQuotedString),
+                (cc => char.IsAscii(cc) && char.IsLetter(cc), TryRecognizeUnquotedString),
+            };
+
+        token = T_EOF;
+
+        foreach (var dispatcher in dispatchers)
+        {
+            if (dispatcher.Condition(c) && dispatcher.Recognizer(out token))
+                return true;
+        }
+
+        return false;
+    }
+    private bool TryRecognizeEqualSign(out Token token)
+        => TryRecognizeTokenType(TokenType.T_EQ, out token);
+    private bool TryRecognizeLiteralString(out Token token)
+        => TryRecognizeTokenType(TokenType.T_LSTRING, out token);
+    private bool TryRecognizeQuotedString(out Token token)
+        => TryRecognizeTokenType(TokenType.T_QSTRING, out token);
+    private bool TryRecognizeUnquotedString(out Token token)
+        => TryRecognizeTokenType(TokenType.T_USTRING, out token);
+
+    private delegate bool TryRecognizeTokenDelegate(out Token token);
+    private bool TryRecognizeTokenType(TokenType tokenType, out Token token)
+    {
+        token = GetNextToken(tokenType);
+        return token.Type == tokenType;
+    }
     private Token GetNextToken(TokenType tokenType, OnMatchedDelegate? onMatched = null)
     {
         System.Diagnostics.Debug.Assert(machines_[(int)tokenType] != null);
@@ -240,6 +243,7 @@ public sealed class Scanner
     // matches T_USTRING token
 
     private readonly StateMachine literalString_ = new LiteralString();
+    private readonly StateMachine quotedString_ = new QuotedString();
     private readonly StateMachine unquotedString_ = new UnquotedString();
 
     // state machine, if any, associated with any token type
@@ -272,7 +276,7 @@ public sealed class Scanner
             /* T_ETYPE      & */ etype_,
             /* T_NUMBER       */ null,
             /* T_LSTRING      */ literalString_,
-            /* T_QSTRING      */ null,
+            /* T_QSTRING      */ quotedString_,
             /* T_RSTRING      */ null,
             /* T_USTRING      */ unquotedString_,
             /* T_LBRACE     { */ null,

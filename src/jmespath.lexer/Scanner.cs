@@ -74,7 +74,7 @@ public sealed class Scanner
     {
         token = T_EOF;
 
-        var tokenTypes = TwoCharToken.GetCandidateTokenTypes(c);
+        var tokenTypes = OneOrTwoCharToken.GetCandidateTokenTypes(c);
         if (tokenTypes.Length != 0)
         {
             token = GetNextToken(tokenTypes[0], (_, text) =>

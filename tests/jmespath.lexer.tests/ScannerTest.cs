@@ -96,6 +96,19 @@ public class ScannerTest
     }
 
     [Fact]
+    public void Scanner_GetNextToken_QuotedString()
+    {
+        var scanner = new Scanner("\"foo\"");
+        var actual = scanner.GetNextToken();
+
+        Assert.Equal(TokenType.T_QSTRING, actual.Type);
+        Assert.Equal("\"foo\"", actual.RawText);
+        Assert.Equal("foo", (string) actual.Value);
+
+        Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
+    }
+
+    [Fact]
     public void Scanner_GetNextToken_UnquotedString()
     {
         var scanner = new Scanner("foo");

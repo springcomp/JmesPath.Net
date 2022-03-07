@@ -1,11 +1,19 @@
-﻿namespace jmespath.lexer.Tokens;
+﻿using jmespath.lexer.Utils;
+
+namespace jmespath.lexer.Tokens;
 internal class QuotedStringToken : Token
 {
-    private string yytext;
+    private readonly string value_;
 
-    public QuotedStringToken(string yytext)
-        : base(TokenType.T_QSTRING, yytext)
+    public QuotedStringToken(string rawText)
+        : base(TokenType.T_QSTRING, rawText)
     {
-        this.yytext = yytext;
+        System.Diagnostics.Debug.Assert(rawText.Length >= 2);
+        System.Diagnostics.Debug.Assert(rawText.StartsWith("\""));
+        System.Diagnostics.Debug.Assert(rawText.EndsWith("\""));
+
+        value_ = StringUtil.Unwrap(rawText);
     }
+
+    public override object Value => value_;
 }

@@ -29,7 +29,7 @@ public sealed class Scanner
         var c = input_[position_];
 
         // recognize one-char unambiguous tokens.
-        // matches on one of "!:,.|@{}[]()"
+        // matches on one of ":*,.@{}]()"
 
         if (TryRecognizeSingleCharacterToken(c, out var t_singleChar))
             return t_singleChar;
@@ -138,6 +138,7 @@ public sealed class Scanner
             dispatchers = new (Func<char, bool>, TryRecognizeTokenDelegate)[] {
                 (cc => cc == '=', TryRecognizeEqualSign),
                 (cc => cc == '`', TryRecognizeLiteralString),
+                (cc => cc == '\'', TryRecognizeRawString),
                 (cc => cc == '"', TryRecognizeQuotedString),
                 (cc => char.IsAscii(cc) && char.IsLetter(cc), TryRecognizeUnquotedString),
             };
@@ -177,6 +178,8 @@ public sealed class Scanner
 
     private bool TryRecognizeQuotedString(out Token token)
         => TryRecognizeTokenType(TokenType.T_QSTRING, out token);
+    private bool TryRecognizeRawString(out Token token)
+        => TryRecognizeTokenType(TokenType.T_RSTRING, out token);
     private bool TryRecognizeUnquotedString(out Token token)
         => TryRecognizeTokenType(TokenType.T_USTRING, out token);
 
@@ -263,6 +266,7 @@ public sealed class Scanner
 
     private readonly StateMachine literalString_ = new LiteralString();
     private readonly StateMachine quotedString_ = new QuotedString();
+    private readonly StateMachine rawString_ = new RawString();
     private readonly StateMachine unquotedString_ = new UnquotedString();
 
     // state machine, if any, associated with any token type
@@ -296,7 +300,7 @@ public sealed class Scanner
             /* T_NUMBER       */ null,
             /* T_LSTRING      */ literalString_,
             /* T_QSTRING      */ quotedString_,
-            /* T_RSTRING      */ null,
+            /* T_RSTRING      */ rawString_,
             /* T_USTRING      */ unquotedString_,
             /* T_LBRACE     { */ null,
             /* T_RBRACE     } */ null,

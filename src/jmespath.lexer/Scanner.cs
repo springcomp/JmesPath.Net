@@ -29,7 +29,7 @@ public sealed class Scanner
         var c = input_[position_];
 
         // recognize one-char unambiguous tokens.
-        // matches on one of "!:,.|@{}[]()"
+        // matches on one of ":*,.@{}]()"
 
         if (TryRecognizeSingleCharacterToken(c, out var t_singleChar))
             return t_singleChar;

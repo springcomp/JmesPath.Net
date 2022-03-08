@@ -70,6 +70,7 @@ public class StateMachineTest
     {
         var machine = new RawString();
 
+        AssertMatch(machine.Match("''"), "''");
         AssertMatch(machine.Match("'hello, world!'"), "'hello, world!'");
         AssertMatch(machine.Match("'\\h\\e\\l\\l\\o\\,\\ \\w\\o\\r\\l\\d\\!'"), "'\\h\\e\\l\\l\\o\\,\\ \\w\\o\\r\\l\\d\\!'");
 

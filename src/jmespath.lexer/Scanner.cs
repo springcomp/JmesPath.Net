@@ -140,6 +140,7 @@ public sealed class Scanner
                 (cc => cc == '`', TryRecognizeLiteralString),
                 (cc => cc == '\'', TryRecognizeRawString),
                 (cc => cc == '"', TryRecognizeQuotedString),
+                (cc => char.IsAscii(cc) && (cc == '-' || char.IsDigit(cc)), TryRecognizeNumber),
                 (cc => char.IsAscii(cc) && char.IsLetter(cc), TryRecognizeUnquotedString),
             };
 
@@ -155,6 +156,8 @@ public sealed class Scanner
     }
     private bool TryRecognizeEqualSign(out Token token)
         => TryRecognizeTokenType(TokenType.T_EQ, out token);
+    private bool TryRecognizeNumber(out Token token)
+        => TryRecognizeTokenType(TokenType.T_NUMBER, out token);
     private bool TryRecognizeLiteralString(out Token token)
         => TryRecognizeTokenType(TokenType.T_LSTRING, out token);
     private bool TryRecognizeQuotedString(out Token token)
@@ -245,6 +248,7 @@ public sealed class Scanner
 
     // matches T_USTRING token
 
+    private readonly StateMachine number_ = new Number();
     private readonly StateMachine literalString_ = new LiteralString();
     private readonly StateMachine quotedString_ = new QuotedString();
     private readonly StateMachine rawString_ = new RawString();
@@ -278,7 +282,7 @@ public sealed class Scanner
             /* T_STAR       * */ null,
             /* T_CURRENT    @ */ null,
             /* T_ETYPE      & */ etype_,
-            /* T_NUMBER       */ null,
+            /* T_NUMBER       */ number_,
             /* T_LSTRING      */ literalString_,
             /* T_QSTRING      */ quotedString_,
             /* T_RSTRING      */ rawString_,

@@ -83,6 +83,18 @@ public class ScannerTest
     }
 
     [Fact]
+    public void Scanner_GetNextToken_Number()
+    {
+        var scanner = new Scanner("-42");
+        var actual = scanner.GetNextToken();
+
+        Assert.Equal(TokenType.T_NUMBER, actual.Type);
+        Assert.Equal("-42", actual.RawText);
+        Assert.Equal(-42, (int) actual.Value);
+
+        Assert.Equal(TokenType.EOF, scanner.GetNextToken().Type);
+    }
+    [Fact]
     public void Scanner_GetNextToken_LiteralString()
     {
         var scanner = new Scanner("`{\"foo\": \"bar\\`baz\"}`");

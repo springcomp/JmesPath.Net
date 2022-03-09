@@ -5,10 +5,10 @@
     <AssemblyTitle>JmesPath.Net.Parser</AssemblyTitle>
     <Authors>Jeremie Devillard;Maxime Labelle;Atif Aziz</Authors>
     <VersionPrefix>42.43.44</VersionPrefix>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <AssemblyName>JmePath.Net.Parser</AssemblyName>
     <AssemblyOriginatorKeyFile>../jmespath.net.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>False</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>JmesPath.Net.Parser</PackageId>
     <PackageTags>jmespath;json</PackageTags>
@@ -20,16 +20,14 @@
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="JmesPathScanner.g.cs" Condition="!Exists( 'JmesPathScanner.g.cs' )" />
     <Compile Include="JmesPathParser.g.cs" Condition="!Exists( 'JmesPathParser.g.cs' )" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\jmespath.lexer\jmespath.lexer.csproj" />
   </ItemGroup>
 
   <Target Name="_RestoreDotnetCliTool" Inputs="JmesPathScanner.lex;JmesPathParser.y" Outputs="JmesPathScanner.g.cs;JmesPathParser.g.cs">
     <Exec Command="dotnet tool restore" />
-  </Target>
-
-  <Target Name="ScannerGenerator" BeforeTargets="BeforeBuild" DependsOnTargets="_RestoreDotnetCliTool" Condition=" '$(IsCrossTargetingBuild)' != 'true' " Inputs="JmesPathScanner.lex" Outputs="JmesPathScanner.g.cs">
-    <Exec Command="dotnet dotnet-gplex /unicode /noinfo /out:JmesPathScanner.g.cs JmesPathScanner.lex" WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
   <Target Name="ParserGenerator" BeforeTargets="BeforeBuild" DependsOnTargets="_RestoreDotnetCliTool" Condition=" '$(IsCrossTargetingBuild)' != 'true' " Inputs="JmesPathParser.y" Outputs="JmesPathParser.g.cs">

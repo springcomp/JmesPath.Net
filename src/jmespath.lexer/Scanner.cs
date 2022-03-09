@@ -4,7 +4,7 @@ using jmespath.lexer.Utils;
 namespace jmespath.lexer;
 public sealed class Scanner
 {
-    private static readonly Token T_EOF = Token.Create(TokenType.EOF, String.Empty);
+    public static readonly Token T_EOF = Token.Create(TokenType.EOF, String.Empty);
 
     private readonly string input_;
 

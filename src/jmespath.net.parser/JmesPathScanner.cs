@@ -1,11 +1,35 @@
-﻿using System;
+﻿using jmespath.lexer;
 using StarodubOleg.GPPG.Runtime;
+using System;
+using System.IO;
+using System.Text;
 
 namespace DevLab.JmesPath
 {
-    internal partial class JmesPathScanner
+    using LexLocation = StarodubOleg.GPPG.Runtime.LexLocation;
+    using Token = jmespath.lexer.Token;
+
+    internal class JmesPathScanner : AbstractScanner<ValueType, LexLocation>
     {
         private PushbackQueue<ScanObj> pushback_;
+
+        private readonly Scanner scanner_;
+        private global::jmespath.lexer.Token nextToken_ = Scanner.T_EOF;
+
+        private int yycol = 0;
+        private string yytext = "";
+        private string yyline = "";
+
+        public JmesPathScanner(Stream input, string codePage)
+        {
+            using (var reader = new StreamReader(input, Encoding.UTF8))
+            {
+                var content = reader.ReadToEnd();
+                scanner_ = new Scanner(content);
+            }
+        }
+
+        public override LexLocation yylloc { get; set; }
 
         /// <summary>
         /// This method enable extended lookahead of more that one
@@ -50,20 +74,16 @@ namespace DevLab.JmesPath
             throw new Exception($"Error({line}, {column}): syntax, near '{text}'.");
         }
 
-        internal int MakeToken(TokenType tokenType)
+        public override int yylex()
         {
-            yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol);
+            nextToken_ = scanner_.GetNextToken();
 
-            try
-            {
-                yylval.Token = Token.Create(tokenType, yytext);
-                yylval.Token.Location = yylloc;
-                return (int)tokenType;
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Error({tokLin}, {tokCol}): syntax, near '{yytext}'.", e);
-            }
+            var location = nextToken_.Location;
+            var tokenType = (TokenType)(int)(nextToken_.Type);
+            yylval = new ValueType { Token = JmesPath.Token.Create(tokenType, nextToken_.RawText), };
+            yylloc = location == null ? null : new LexLocation(location.StartLine, location.StartColumn, location.EndLine, location.EndColumn);
+
+            return (int)nextToken_.Type;
         }
     }
 }

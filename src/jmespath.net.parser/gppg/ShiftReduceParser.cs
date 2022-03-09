@@ -209,7 +209,7 @@ namespace StarodubOleg.GPPG.Runtime
 			while (true)
 			{
 #if TRACE_ACTIONS
-				Console.Error.WriteLine("Entering state {0} ", FsaState.number);
+				System.Diagnostics.Debug.WriteLine($"Entering state {FsaState.number}");
 				DisplayStack();
 #endif
 				int action = FsaState.defaultAction;
@@ -224,15 +224,17 @@ namespace StarodubOleg.GPPG.Runtime
 						LastSpan = scanner.yylloc;
 						NextToken = scanner.yylex();
 #if TRACE_ACTIONS
-					   Console.Error.WriteLine( "Reading: Next token is {0}", TerminalToString( NextToken ) );
+						System.Diagnostics.Debug.WriteLine( $"Reading: Next token is {TerminalToString(NextToken)}");
 #endif
 					}
 #if TRACE_ACTIONS
-					else 
-						Console.Error.WriteLine( "Next token is still {0}", TerminalToString( NextToken ) );
+					else
+						System.Diagnostics.Debug.WriteLine( $"Next token is still {TerminalToString(NextToken)}" );
 #endif
 					if (FsaState.ParserTable.ContainsKey(NextToken))
 						action = FsaState.ParserTable[NextToken];
+
+					System.Diagnostics.Debug.WriteLine( $"Action: {action}" );
 				}
 
 				if (action > 0)         // shift
@@ -271,7 +273,7 @@ namespace StarodubOleg.GPPG.Runtime
 		private void Shift(int stateIndex)
 		{
 #if TRACE_ACTIONS
-				Console.Error.Write("Shifting token {0}, ", TerminalToString(NextToken));
+				System.Diagnostics.Debug.Write( $"Shifting token {TerminalToString(NextToken)}, ");
 #endif
 			FsaState = states[stateIndex];
 
@@ -407,7 +409,7 @@ namespace StarodubOleg.GPPG.Runtime
 			Shift(FsaState.ParserTable[NextToken]);
 
 #if TRACE_ACTIONS
-				Console.Error.WriteLine("Entering state {0} ", FsaState.number);
+				System.Diagnostics.Debug.WriteLine("Entering state {FsaState.number)}");
 #endif
 			NextToken = old_next;
 		}
@@ -422,7 +424,7 @@ namespace StarodubOleg.GPPG.Runtime
 					return true;
 
 #if TRACE_ACTIONS
-					Console.Error.WriteLine("Error: popping state {0}", StateStack.TopElement().number);
+					System.Diagnostics.Debug.WriteLine($"Error: popping state {StateStack.TopElement().number}");
 #endif
 				StateStack.Pop();
 				valueStack.Pop();
@@ -434,7 +436,7 @@ namespace StarodubOleg.GPPG.Runtime
 				if (StateStack.IsEmpty())
 				{
 #if TRACE_ACTIONS
-						Console.Error.WriteLine("Aborting: didn't find a state that accepts error token");
+						System.Diagnostics.Debug.WriteLine("Aborting: didn't find a state that accepts error token");
 #endif
 					return false;
 				}
@@ -456,12 +458,12 @@ namespace StarodubOleg.GPPG.Runtime
 					if (NextToken == 0)
 					{
 #if TRACE_ACTIONS
-							Console.Error.Write("Reading a token: ");
+							System.Diagnostics.Debug.Write("Reading a token: ");
 #endif
 						NextToken = scanner.yylex();
 					}
 #if TRACE_ACTIONS
-						Console.Error.WriteLine("Next token is {0}", TerminalToString(NextToken));
+						System.Diagnostics.Debug.WriteLine($"Next token is {TerminalToString(NextToken)}");
 #endif
 					if (NextToken == endOfFileToken)
 						return false;
@@ -474,7 +476,7 @@ namespace StarodubOleg.GPPG.Runtime
 					else
 					{
 #if TRACE_ACTIONS
-							Console.Error.WriteLine("Error: Discarding {0}", TerminalToString(NextToken));
+							System.Diagnostics.Debug.WriteLine("Error: Discarding {TerminalToString(NextToken)}");
 #endif
 						NextToken = 0;
 					}
@@ -497,7 +499,7 @@ namespace StarodubOleg.GPPG.Runtime
 				//  use the LALR(1) table if a production ends on "error"
 				//
 #if TRACE_ACTIONS
-					Console.Error.WriteLine("Error: panic discard of {0}", TerminalToString(NextToken));
+					System.Diagnostics.Debug.WriteLine("Error: panic discard of {0}", TerminalToString(NextToken));
 #endif
 				if (NextToken == endOfFileToken)
 					return false;
@@ -541,27 +543,25 @@ namespace StarodubOleg.GPPG.Runtime
 
 		private void DisplayStack()
 		{
-			Console.Error.Write("State stack is now:");
+			System.Diagnostics.Debug.Write("State stack is now:");
 			for (int i = 0; i < StateStack.Depth; i++)
-				Console.Error.Write(" {0}", StateStack[i].number);
-			Console.Error.WriteLine();
+				System.Diagnostics.Debug.WriteLine( $" {StateStack[i].number}");
 		}
-
 		private void DisplayRule(int ruleNumber)
 		{
-			Console.Error.Write("Reducing stack by rule {0}, ", ruleNumber);
+			System.Diagnostics.Debug.WriteLine($"Reducing stack by rule {ruleNumber}");
 			DisplayProduction(rules[ruleNumber]);
 		}
 
 		private void DisplayProduction(Rule rule)
 		{
 			if (rule.RightHandSide.Length == 0)
-				Console.Error.Write("/* empty */ ");
+				System.Diagnostics.Debug.Write("/* empty */ ");
 			else
 				foreach (int symbol in rule.RightHandSide)
-					Console.Error.Write("{0} ", SymbolToString(symbol));
+					System.Diagnostics.Debug.Write($"{SymbolToString(symbol)} ");
 
-			Console.Error.WriteLine("-> {0}", SymbolToString(rule.LeftHandSide));
+			System.Diagnostics.Debug.WriteLine($"-> {SymbolToString(rule.LeftHandSide)}");
 		}
 
 		/// <summary>

@@ -19,6 +19,14 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+    <DefineConstants>TRACE_ACTIONS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+    <DefineConstants>TRACE_ACTIONS</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="JmesPathParser.g.cs" Condition="!Exists( 'JmesPathParser.g.cs' )" />
   </ItemGroup>

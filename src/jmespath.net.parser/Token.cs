@@ -21,11 +21,6 @@ namespace DevLab.JmesPath
         {
             switch (tokenType)
             {
-                case TokenType.error:
-                    break;
-                case TokenType.EOF:
-                    break;
-
                 case TokenType.T_NUMBER:
                     return new NumberToken(yytext);
 

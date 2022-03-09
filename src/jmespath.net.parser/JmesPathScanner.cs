@@ -1,14 +1,38 @@
-﻿using System;
+﻿using jmespath.lexer;
 using StarodubOleg.GPPG.Runtime;
+using System;
+using System.IO;
+using System.Text;
 
 namespace DevLab.JmesPath
 {
-    internal partial class JmesPathScanner
+    using LexLocation = StarodubOleg.GPPG.Runtime.LexLocation;
+    using Token = jmespath.lexer.Token;
+
+    internal class JmesPathScanner : AbstractScanner<ValueType, LexLocation>
     {
         private PushbackQueue<ScanObj> pushback_;
 
+        private readonly Scanner scanner_;
+        private readonly string input_;
+
+        private global::jmespath.lexer.Token nextToken_ = Scanner.T_EOF;
+
+        public JmesPathScanner(Stream input, string codePage)
+        {
+            using (var reader = new StreamReader(input, Encoding.UTF8))
+            {
+                var content = reader.ReadToEnd();
+
+                input_ = content;
+                scanner_ = new Scanner(content);
+            }
+        }
+
+        public override LexLocation yylloc { get; set; }
+
         /// <summary>
-        /// This method enable extended lookahead of more that one
+        /// This method enables extended lookahead of more that one
         /// token to resolve ambiguities in the grammar.
         /// see: gppg manual, page 51, 10 AppendixC:PushingBackInputSymbols.
         /// see: http://softwareautomata.blogspot.fr/2011/12/doing-ad-hoc-lookahead-in-gppg-parsers_25.html
@@ -43,27 +67,35 @@ namespace DevLab.JmesPath
 
         public override void yyerror(string format, params object[] args)
         {
-            var line = yyline;
-            var column = yycol;
-            var text = yytext;
+            var line = nextToken_?.Location?.StartLine ?? 0;
+            var column = nextToken_?.Location?.StartColumn ?? 0;
+            var text = nextToken_?.RawText;
+
+            if (String.IsNullOrEmpty(text))
+                text = input_;
 
             throw new Exception($"Error({line}, {column}): syntax, near '{text}'.");
         }
 
-        internal int MakeToken(TokenType tokenType)
+        public override int yylex()
         {
-            yylloc = new LexLocation(tokLin, tokCol, tokELin, tokECol);
+            // Code to take tokens from non-empty queue.
+            if (pushback_.QueueLength > 0)
+            {
+                ScanObj obj = pushback_.DequeueCurrentToken();
+                yylloc = obj.yylloc;
+                yylval = obj.yylval;
+                return obj.token;
+            }
 
-            try
-            {
-                yylval.Token = Token.Create(tokenType, yytext);
-                yylval.Token.Location = yylloc;
-                return (int)tokenType;
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Error({tokLin}, {tokCol}): syntax, near '{yytext}'.", e);
-            }
+            nextToken_ = scanner_.GetNextToken();
+
+            var location = nextToken_.Location;
+            var tokenType = (TokenType)(int)(nextToken_.Type);
+            yylval = new ValueType { Token = JmesPath.Token.Create(tokenType, nextToken_.RawText), };
+            yylloc = location == null ? null : new LexLocation(location.StartLine, location.StartColumn, location.EndLine, location.EndColumn);
+
+            return (int)nextToken_.Type;
         }
     }
 }

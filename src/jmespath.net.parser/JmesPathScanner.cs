@@ -9,7 +9,7 @@ namespace DevLab.JmesPath
     using LexLocation = StarodubOleg.GPPG.Runtime.LexLocation;
     using Token = jmespath.lexer.Token;
 
-    internal class JmesPathScanner : AbstractScanner<ValueType, LexLocation>
+    internal partial class JmesPathScanner : AbstractScanner<ValueType, LexLocation>
     {
         private PushbackQueue<ScanObj> pushback_;
 
@@ -76,6 +76,14 @@ namespace DevLab.JmesPath
 
         public override int yylex()
         {
+            if (this.pushback_.QueueLength > 0)
+            {
+                var obj = this.pushback_.DequeueCurrentToken();
+                this.yylloc = obj.yylloc;
+                this.yylval = obj.yylval;
+                return obj.token;
+            }
+
             nextToken_ = scanner_.GetNextToken();
 
             var location = nextToken_.Location;

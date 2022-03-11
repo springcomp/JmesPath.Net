@@ -14,6 +14,12 @@ internal class LiteralStringToken : Token
         System.Diagnostics.Debug.Assert(rawText.EndsWith("`"));
 
         var literal = StringUtil.UnescapeLiteral(rawText);
+        CheckValidJson(literal);
+        value_ = literal;
+    }
+
+    private static void CheckValidJson(string literal)
+    {
         var checker = new JsonChecker();
         var lws = true;
         var scalar = false;
@@ -41,7 +47,6 @@ internal class LiteralStringToken : Token
         if (scalar)
             checker.Check(']');
         checker.FinalCheck();
-        value_ = literal;
     }
 
     public override object Value => value_;

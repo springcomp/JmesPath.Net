@@ -155,7 +155,26 @@ public sealed class Scanner
     private bool TryRecognizeEqualSign(out Token token)
         => TryRecognizeTokenType(TokenType.T_EQ, out token);
     private bool TryRecognizeLiteralString(out Token token)
-        => TryRecognizeTokenType(TokenType.T_LSTRING, out token);
+    {
+        try
+        {
+            // literal strings have builtin JSON validity check
+            // that will throw an exception
+
+            return TryRecognizeTokenType(TokenType.T_LSTRING, out token);
+        }
+        catch (Exception ex)
+        {
+            // must return 'syntax' error
+
+            var text = input_;
+            var start = Math.Max(0, position_ - 4);
+            var end = Math.Min(position_ + 4, text.Length - 1);
+
+            throw new Exception($"Error({line_}, {column_}): syntax, near '{text.Substring(start, end - start)}'.", ex);
+        }
+    }
+
     private bool TryRecognizeQuotedString(out Token token)
         => TryRecognizeTokenType(TokenType.T_QSTRING, out token);
     private bool TryRecognizeUnquotedString(out Token token)

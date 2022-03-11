@@ -6,9 +6,10 @@ public sealed class LiteralString : TransitionTableMachine
     {
         /*         CT  CN  CB
         /* 0  */ {  1, __, __ },
-        /* 1  */ {  3,  1,  2 },
-        /* 2  */ {  1, __, __ },
-        /* 3+ */ { __, __, __ },
+        /* 1  */ { __,  2,  3 },
+        /* 2  */ {  4,  2,  3 },
+        /* 3  */ {  2,  2,  2 },
+        /* 4+ */ { __, __, __ },
     };
 
     private const int CT = 0; // `
@@ -16,7 +17,7 @@ public sealed class LiteralString : TransitionTableMachine
     private const int CB = 2; // \\ 
 
     public LiteralString()
-        : base(0, 3, null!, state_transition_table_)
+        : base(0, 4, null!, state_transition_table_)
     {
     }
 

@@ -141,7 +141,7 @@ public sealed class Scanner
                 (cc => cc == '\'', TryRecognizeRawString),
                 (cc => cc == '"', TryRecognizeQuotedString),
                 (cc => char.IsAscii(cc) && (cc == '-' || char.IsDigit(cc)), TryRecognizeNumber),
-                (cc => char.IsAscii(cc) && char.IsLetter(cc), TryRecognizeUnquotedString),
+                (cc => char.IsAscii(cc) && (cc == '_' || char.IsLetter(cc)), TryRecognizeUnquotedString),
             };
 
         token = T_EOF;

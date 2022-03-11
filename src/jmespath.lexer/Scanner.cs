@@ -4,7 +4,8 @@ using jmespath.lexer.Utils;
 namespace jmespath.lexer;
 public sealed class Scanner
 {
-    private static readonly Token T_EOF = Token.Create(TokenType.EOF, String.Empty);
+    public static readonly Token T_EOF = Token.Create(TokenType.EOF, String.Empty);
+    public static readonly Token E_UNRECOGNIZED = Token.Create(TokenType.E_UNRECOGNIZED, String.Empty);
 
     private readonly string input_;
 
@@ -53,7 +54,7 @@ public sealed class Scanner
         if (TryRecognizeToken(c, out var token))
             return token;
 
-        return T_EOF;
+        return E_UNRECOGNIZED;
     }
 
     private bool TryRecognizeSingleCharacterToken(char c, out Token token)

@@ -38,6 +38,13 @@ public static partial class JMESPath
         public const int T_PIPE = 1;
         public const int T_OR = 2;
         public const int T_AND = 3;
+
+        public const int T_EQ = 5;
+        public const int T_GE = 5;
+        public const int T_GT = 5;
+        public const int T_LE = 5;
+        public const int T_LT = 5;
+        public const int T_NE = 5;
     
         // everything above stops a projection
 
@@ -133,6 +140,49 @@ public static partial class JMESPath
                 parser.State.OnAndExpression();
                 return succeeded;
             };
+
+        public static InfixParselet ComparatorEqualExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_EQ); // TODO error
+                parser.State.OnComparisonEqual();
+                return succeeded;
+            };
+        public static InfixParselet ComparatorGreaterThanOrEqualExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_GE); // TODO error
+                parser.State.OnComparisonGreaterOrEqual();
+                return succeeded;
+            };
+        public static InfixParselet ComparatorGreaterThanExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_GT); // TODO error
+                parser.State.OnComparisonGreater();
+                return succeeded;
+            };
+        public static InfixParselet ComparatorLesserThanOrEqualExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_LE); // TODO error
+                parser.State.OnComparisonLesserOrEqual();
+                return succeeded;
+            };
+        public static InfixParselet ComparatorLesserThanExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_LT); // TODO error
+                parser.State.OnComparisonLesser();
+                return succeeded;
+            };
+        public static InfixParselet ComparatorNotEqualExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_NE); // TODO error
+                parser.State.OnComparisonNotEqual();
+                return succeeded;
+            };
     }
 
     sealed class Spec : IEnumerable
@@ -166,6 +216,13 @@ public static partial class JMESPath
             { TokenType.T_PIPE, Precedence.T_PIPE, Parselets.PipeExpression },
             { TokenType.T_OR, Precedence.T_OR, Parselets.OrExpression },
             { TokenType.T_AND, Precedence.T_AND, Parselets.AndExpression },
+
+            { TokenType.T_EQ, Precedence.T_EQ, Parselets.ComparatorEqualExpression },
+            { TokenType.T_GE, Precedence.T_GE, Parselets.ComparatorGreaterThanOrEqualExpression },
+            { TokenType.T_GT, Precedence.T_GT, Parselets.ComparatorGreaterThanExpression },
+            { TokenType.T_LE, Precedence.T_LE, Parselets.ComparatorLesserThanOrEqualExpression },
+            { TokenType.T_LT, Precedence.T_LT, Parselets.ComparatorLesserThanExpression },
+            { TokenType.T_NE, Precedence.T_NE, Parselets.ComparatorNotEqualExpression },
         };
 
         readonly Dictionary<TokenType, PrefixParselet> _prefixes = new();

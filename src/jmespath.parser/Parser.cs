@@ -42,6 +42,9 @@ public static partial class JMESPath
         public static readonly PrefixParselet Error =
             (token, _) => throw JMESPath.Error.Syntax(token);
 
+        public static readonly PrefixParselet Current =
+            (_, parser) => { parser.State.OnCurrentNode(); return true; };
+
         public static readonly PrefixParselet Identifier =
             (token, parser) => { parser.State.OnIdentifier((string)token.Value); return true; };
 
@@ -62,6 +65,8 @@ public static partial class JMESPath
             { TokenType.E_UNRECOGNIZED, Parselets.Error },
 
             // prefixed parselets
+
+            { TokenType.T_CURRENT, Parselets.Current },
 
             { TokenType.T_LSTRING, Parselets.Literal },
             { TokenType.T_QSTRING, Parselets.Identifier },

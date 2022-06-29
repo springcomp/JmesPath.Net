@@ -44,6 +44,9 @@ public static partial class JMESPath
 
         public static readonly PrefixParselet Identifier =
             (token, parser) => { parser.State.OnIdentifier((string)token.Value); return true; };
+
+        public static readonly PrefixParselet Literal =
+            (token, parser) => { parser.State.OnLiteralString((string)token.Value); return true; };
     }
 
     sealed class Spec : IEnumerable
@@ -57,6 +60,7 @@ public static partial class JMESPath
 
             // prefixed parselets
 
+            { TokenType.T_LSTRING, Parselets.Literal },
             { TokenType.T_QSTRING, Parselets.Identifier },
             { TokenType.T_USTRING, Parselets.Identifier },
 

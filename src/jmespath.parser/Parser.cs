@@ -35,6 +35,10 @@ public static partial class JMESPath
 
     static class Precedence
     {
+        public const int T_PIPE = 1;
+        public const int T_OR = 2;
+        public const int T_AND = 3;
+    
         // everything above stops a projection
 
         public const int T_NOT = 45;
@@ -44,6 +48,8 @@ public static partial class JMESPath
     {
         public static readonly PrefixParselet Error =
             (token, _) => throw JMESPath.Error.Syntax(token);
+
+        // prefix parselets
 
         public static readonly PrefixParselet Current =
             (_, parser) => { parser.State.OnCurrentNode(); return true; };
@@ -101,6 +107,32 @@ public static partial class JMESPath
                 parser.Read(TokenType.T_RPAREN, parser.Missing(TokenType.T_RPAREN));
                 return succeeded;
             };
+
+        // infix / postfix parselets
+
+        public static InfixParselet PipeExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_PIPE); // TODO error
+                parser.State.OnPipeExpression();
+                return succeeded;
+            };
+
+        public static InfixParselet OrExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_OR); // TODO error
+                parser.State.OnOrExpression();
+                return succeeded;
+            };
+
+        public static InfixParselet AndExpression =
+            (_, _, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_AND); // TODO error
+                parser.State.OnAndExpression();
+                return succeeded;
+            };
     }
 
     sealed class Spec : IEnumerable
@@ -131,6 +163,9 @@ public static partial class JMESPath
 
             // infix / postfix parselets
 
+            { TokenType.T_PIPE, Precedence.T_PIPE, Parselets.PipeExpression },
+            { TokenType.T_OR, Precedence.T_OR, Parselets.OrExpression },
+            { TokenType.T_AND, Precedence.T_AND, Parselets.AndExpression },
         };
 
         readonly Dictionary<TokenType, PrefixParselet> _prefixes = new();

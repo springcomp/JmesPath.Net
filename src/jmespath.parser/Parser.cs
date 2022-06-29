@@ -75,6 +75,14 @@ public static partial class JMESPath
                 parser.State.OnNotExpression();
                 return succeeded;
             };
+
+        public static readonly PrefixParselet ParenExpression =
+            (_, parser) =>
+            {
+                var succeeded = parser.Parse(0); // TODO error
+                parser.Read(TokenType.T_RPAREN, parser.Missing(TokenType.T_RPAREN));
+                return succeeded;
+            };
     }
 
     sealed class Spec : IEnumerable
@@ -97,6 +105,8 @@ public static partial class JMESPath
 
             { TokenType.T_ETYPE, Parselets.ExpressionType },
             { TokenType.T_NOT, Parselets.NotExpression },
+
+            { TokenType.T_LPAREN, Parselets.ParenExpression },
 
             // infix / postfix parselets
 

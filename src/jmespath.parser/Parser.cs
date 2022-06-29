@@ -35,6 +35,9 @@ public static partial class JMESPath
 
     static class Precedence
     {
+        // everything above stops a projection
+
+        public const int T_NOT = 45;
     }
 
     static class Parselets
@@ -53,6 +56,14 @@ public static partial class JMESPath
 
         public static readonly PrefixParselet RawString =
             (token, parser) => { parser.State.OnRawString((string)token.Value); return true; };
+
+        public static readonly PrefixParselet NotExpression =
+            (_, parser) =>
+            {
+                var succeeded = parser.Parse(Precedence.T_NOT); // TODO: error
+                parser.State.OnNotExpression();
+                return succeeded;
+            };
     }
 
     sealed class Spec : IEnumerable
@@ -72,6 +83,8 @@ public static partial class JMESPath
             { TokenType.T_QSTRING, Parselets.Identifier },
             { TokenType.T_USTRING, Parselets.Identifier },
             { TokenType.T_RSTRING, Parselets.RawString },
+
+            { TokenType.T_NOT, Parselets.NotExpression },
 
             // infix / postfix parselets
 

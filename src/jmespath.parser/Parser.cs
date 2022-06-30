@@ -57,6 +57,21 @@ public static partial class JMESPath
         public static readonly PrefixParselet RawString =
             (token, parser) => { parser.State.OnRawString((string)token.Value); return true; };
 
+        public static readonly PrefixParselet IdentifierOrFunctionCall =
+            (token, parser) =>
+            {
+                var identifier = (string)token.Value;
+
+                // attempt to parse function call
+
+                var (tokenType, nextToken) = parser.Peek();
+                if (tokenType == TokenType.T_LPAREN)
+                    return OnFunctionCall(parser, identifier);
+
+                parser.State.OnIdentifier(identifier);
+                return true;
+            };
+
         public static readonly PrefixParselet HashWildcard =
             (token, parser) => { parser.State.OnHashWildcardProjection(); return true; };
 
@@ -103,8 +118,9 @@ public static partial class JMESPath
 
             { TokenType.T_LSTRING, Parselets.Literal },
             { TokenType.T_QSTRING, Parselets.Identifier },
-            { TokenType.T_USTRING, Parselets.Identifier },
             { TokenType.T_RSTRING, Parselets.RawString },
+
+            { TokenType.T_USTRING, Parselets.IdentifierOrFunctionCall },
 
             { TokenType.T_STAR, Parselets.HashWildcard },
 
@@ -130,7 +146,7 @@ public static partial class JMESPath
         public PrefixParselet Prefix(TokenType tokenType, LexLocation? location)
         {
             if (!_prefixes.ContainsKey(tokenType))
-                throw JMESPath.Error.Syntax(tokenType, location);
+                throw Error.Syntax(tokenType, location);
 
             return _prefixes[tokenType];
         }
@@ -151,6 +167,53 @@ public static partial class JMESPath
     }
 
     #region Implementation
+
+    private static bool OnFunctionCall(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, string functionName)
+    {
+        parser.Read(); // T_LPAREN
+
+        var succeeded = false;
+
+        parser.State.PushFunction();
+
+        do
+        {
+            var (tokenType, _) = parser.Peek();
+            if (tokenType == TokenType.T_RPAREN)
+            {
+                succeeded = true;
+                break;
+            }
+
+            while (true)
+            {
+                // parse argument
+
+                succeeded = parser.Parse(0); // TODO: error
+                parser.State.AddFunctionArg();
+
+                // move to next argument 
+
+                (tokenType, var nextToken) = parser.Peek();
+                if (tokenType == TokenType.T_RPAREN)
+                    break;
+
+                if (tokenType != TokenType.T_COMMA)
+                    throw Error.Syntax(nextToken);
+
+                parser.Read();
+            }
+
+        } while (false) ;
+
+        if (succeeded)
+        {
+            parser.State.PopFunction(functionName);
+            parser.Read(TokenType.T_RPAREN, parser.Missing(TokenType.T_RPAREN));
+        }
+
+        return succeeded;
+    }
 
     #endregion
 }

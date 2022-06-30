@@ -2,7 +2,7 @@
 
 public static partial class JMESPath
 {
-    static class Error
+    internal static class Error
     {
         public static SyntaxErrorException Syntax(Token t)
             => Syntax(t.Type, t.Location);

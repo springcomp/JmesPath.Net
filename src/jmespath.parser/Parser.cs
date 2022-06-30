@@ -41,6 +41,9 @@ public static partial class JMESPath
     {
         public static readonly PrefixParselet Error =
             (token, _) => throw JMESPath.Error.Syntax(token);
+
+        public static readonly PrefixParselet Identifier =
+            (token, parser) => { parser.State.OnIdentifier((string)token.Value); return true; };
     }
 
     sealed class Spec : IEnumerable
@@ -54,6 +57,8 @@ public static partial class JMESPath
 
             // prefixed parselets
 
+            { TokenType.T_QSTRING, Parselets.Identifier },
+            { TokenType.T_USTRING, Parselets.Identifier },
 
             // infix / postfix parselets
 

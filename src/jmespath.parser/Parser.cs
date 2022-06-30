@@ -57,6 +57,9 @@ public static partial class JMESPath
         public static readonly PrefixParselet RawString =
             (token, parser) => { parser.State.OnRawString((string)token.Value); return true; };
 
+        public static readonly PrefixParselet HashWildcard =
+            (token, parser) => { parser.State.OnHashWildcardProjection(); return true; };
+
         public static readonly PrefixParselet ExpressionType =
             (token, parser) =>
             {
@@ -102,6 +105,8 @@ public static partial class JMESPath
             { TokenType.T_QSTRING, Parselets.Identifier },
             { TokenType.T_USTRING, Parselets.Identifier },
             { TokenType.T_RSTRING, Parselets.RawString },
+
+            { TokenType.T_STAR, Parselets.HashWildcard },
 
             { TokenType.T_ETYPE, Parselets.ExpressionType },
             { TokenType.T_NOT, Parselets.NotExpression },

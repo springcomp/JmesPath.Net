@@ -6,6 +6,8 @@ using jmespath.lexer;
 using PrefixParselet = System.Func<jmespath.lexer.Token, Gratt.Parser<DevLab.JmesPath.IJmesPathGenerator, jmespath.lexer.TokenType, jmespath.lexer.Token, int, bool>, bool>;
 using InfixParselet = System.Func<jmespath.lexer.Token, bool, Gratt.Parser<DevLab.JmesPath.IJmesPathGenerator, jmespath.lexer.TokenType, jmespath.lexer.Token, int, bool>, bool>;
 
+// TODO: T_ETYPE is currently parsed as an expression - it should only be valid as a function argument
+
 public static partial class JMESPath
 {
     public static bool Parse(string expression, IJmesPathGenerator generator)
@@ -57,6 +59,14 @@ public static partial class JMESPath
         public static readonly PrefixParselet RawString =
             (token, parser) => { parser.State.OnRawString((string)token.Value); return true; };
 
+        public static readonly PrefixParselet ExpressionType =
+            (_, parser) =>
+            {
+                var succeeded = parser.Parse(0); // TODO: error
+                parser.State.OnExpressionType();
+                return succeeded;
+            };
+
         public static readonly PrefixParselet NotExpression =
             (_, parser) =>
             {
@@ -84,6 +94,7 @@ public static partial class JMESPath
             { TokenType.T_USTRING, Parselets.Identifier },
             { TokenType.T_RSTRING, Parselets.RawString },
 
+            { TokenType.T_ETYPE, Parselets.ExpressionType },
             { TokenType.T_NOT, Parselets.NotExpression },
 
             // infix / postfix parselets

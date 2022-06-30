@@ -115,6 +115,9 @@ public static partial class JMESPath
                 return succeeded;
             };
 
+        public static readonly PrefixParselet MultiSelectHash =
+            (_, parser) => OnMultiSelectHash(parser);
+
         // infix / postfix parselets
 
         public static InfixParselet PipeExpression =
@@ -209,6 +212,7 @@ public static partial class JMESPath
             { TokenType.T_ETYPE, Parselets.ExpressionType },
             { TokenType.T_NOT, Parselets.NotExpression },
 
+            { TokenType.T_LBRACE, Parselets.MultiSelectHash },
             { TokenType.T_LPAREN, Parselets.ParenExpression },
 
             // infix / postfix parselets
@@ -296,13 +300,66 @@ public static partial class JMESPath
                 parser.Read();
             }
 
-        } while (false) ;
+        } while (false);
 
         if (succeeded)
         {
             parser.State.PopFunction(functionName);
             parser.Read(TokenType.T_RPAREN, parser.Missing(TokenType.T_RPAREN));
         }
+
+        return succeeded;
+    }
+
+    private static bool OnMultiSelectHash(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser)
+    {
+        var succeeded = false;
+
+        parser.State.PushMultiSelectHash();
+
+        while (true)
+        {
+            succeeded = OnKeyValExpression(parser); // TODO error
+
+            parser.State.AddMultiSelectHashExpression();
+
+            // move to next keyval-expression
+
+            var (tokenType, nextToken) = parser.Peek();
+
+            if (tokenType == TokenType.T_RBRACE)
+                break;
+
+            if (tokenType != TokenType.T_COMMA)
+                throw JMESPath.Error.Syntax(nextToken);
+
+            parser.Read();
+        }
+
+        if (succeeded)
+        {
+            parser.State.PopMultiSelectHash();
+            parser.Read(TokenType.T_RBRACE, parser.Missing(TokenType.T_RBRACE));
+        }
+
+        return succeeded;
+    }
+
+    private static bool OnKeyValExpression(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser)
+    {
+        var (tokenType, nextToken) = parser.Peek();
+        if (!new[] { TokenType.T_USTRING, TokenType.T_QSTRING, }.Contains(tokenType))
+            throw JMESPath.Error.Syntax(nextToken);
+
+        // parse identifier
+
+        var succeeded = parser.Parse(0); // TODO error
+
+        parser.Read(TokenType.T_COLON, delegate { throw JMESPath.Error.Missing(TokenType.T_COLON, parser.GetLocation()); });
+
+        // parse expression
+
+        succeeded = parser.Parse(0); //TODO error
 
         return succeeded;
     }

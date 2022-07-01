@@ -13,6 +13,9 @@ namespace DevLab.JmesPath.Expressions
         private readonly JmesPathExpression[] expressions_;
         private readonly JmesPathFunction function_;
 
+        public override string ExpressionType
+            => "function-expression";
+
         public JmesPathFunctionExpression(IFunctionRepository repository, string name, IList<JmesPathExpression> expressions)
             : this(repository, name, expressions.ToArray())
         {

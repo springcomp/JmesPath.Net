@@ -9,6 +9,9 @@ namespace DevLab.JmesPath.Expressions
     {
         private readonly JmesPathExpression expression_;
 
+        public override string ExpressionType
+            => "list-filter-expression";
+
         public JmesPathFilterProjection(JmesPathExpression expression)
         {
             expression_ = expression;

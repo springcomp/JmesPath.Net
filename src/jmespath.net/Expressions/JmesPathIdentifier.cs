@@ -9,6 +9,9 @@ namespace DevLab.JmesPath.Expressions
         private readonly string name_;
         internal IContextEvaluator evaluator_;
 
+        public override string ExpressionType
+            => "identifier";
+
         public JmesPathIdentifier(string name)
         {
             name_ = name;

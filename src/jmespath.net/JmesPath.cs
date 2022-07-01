@@ -50,6 +50,9 @@ namespace DevLab.JmesPath
         {
             private readonly JmesPathExpression expression_;
 
+            public override string ExpressionType
+                => expression_?.ExpressionType ?? "(none)";
+
             internal Expression(JmesPathExpression expression)
             {
                 expression_ = expression;

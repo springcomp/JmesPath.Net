@@ -2,23 +2,11 @@
 
 namespace DevLab.JmesPath.Expressions
 {
-    public class JmesParenExpression : JmesPathExpression
-    {
-        private readonly JmesPathExpression expression_;
-
-        public JmesParenExpression(JmesPathExpression expression)
-        {
-            expression_ = expression;
-        }
-
-        protected override JmesPathArgument Transform(JToken json)
-        {
-            return expression_.Transform(json);
-        }
-    }
-
     public class JmesPathOrExpression : JmesPathCompoundExpression
     {
+        public override string ExpressionType
+            => "or-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathOrExpression"/> class
         /// with two <see cref="JmesPathExpression"/> objects.

@@ -10,6 +10,9 @@ namespace DevLab.JmesPath.Expressions
             = new Dictionary<string, JmesPathExpression>()
             ;
 
+        public override string ExpressionType
+            => "multi-select-hash";
+
         public JmesPathMultiSelectHash(IDictionary<string, JmesPathExpression> dictionary)
         {
             foreach (var key in dictionary.Keys)

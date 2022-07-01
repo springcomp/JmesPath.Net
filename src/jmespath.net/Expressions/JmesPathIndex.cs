@@ -6,6 +6,9 @@ namespace DevLab.JmesPath.Expressions
     {
         private readonly int index_;
 
+        public override string ExpressionType
+            => "index";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathIndex"/>
         /// with the given index.

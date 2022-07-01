@@ -7,6 +7,9 @@ namespace DevLab.JmesPath.Expressions
     /// </summary>
     public sealed class JmesPathSubExpression : JmesPathCompoundExpression
     {
+        public override string ExpressionType
+            => "sub-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathSubExpression"/> class
         /// with two <see cref="JmesPathExpression"/> objects.

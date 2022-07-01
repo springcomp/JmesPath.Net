@@ -41,6 +41,9 @@ namespace DevLab.JmesPath
         public bool InFunctionArg
             => functions_.Any();
 
+        public string ExpressionType
+            => expressions_.Count > 0 ? expressions_.Peek().ExpressionType : "(none)";
+
         public void OnExpression()
         {
             if (expression_ == null)

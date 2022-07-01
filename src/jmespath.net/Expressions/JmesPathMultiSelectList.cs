@@ -11,6 +11,9 @@ namespace DevLab.JmesPath.Expressions
             = new List<JmesPathExpression>()
             ;
 
+        public override string ExpressionType
+            => "multi-select-list";
+
         public JmesPathMultiSelectList(params JmesPathExpression[] expressions)
             : this((IEnumerable<JmesPathExpression>)expressions)
         {

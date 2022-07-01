@@ -14,6 +14,9 @@ namespace DevLab.JmesPath.Expressions
         private readonly int? stop_;
         private readonly int? step_;
 
+        public override string ExpressionType
+            => "slice-projection";
+
         public JmesPathSliceProjection(int? start, int? stop, int? step)
         {
             start_ = start;

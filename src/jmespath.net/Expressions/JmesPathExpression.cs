@@ -45,6 +45,11 @@ namespace DevLab.JmesPath.Expressions
         /// <returns></returns>
         protected abstract JmesPathArgument Transform(JToken json);
 
+        /// <summary>
+        /// Returns the ABNF expression type.
+        /// </summary>
+        public abstract string ExpressionType { get; }
+
         public bool IsExpressionType { get; private set; }
 
         public static void MakeExpressionType(JmesPathExpression expression)

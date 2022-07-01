@@ -8,7 +8,7 @@ namespace DevLab.JmesPath.Expressions
     /// Represents the base class for a JmesPath expression that
     /// operates on a sequence of two expressions.
     /// </summary>
-    public class JmesPathCompoundExpression : JmesPathExpression
+    public abstract class JmesPathCompoundExpression : JmesPathExpression
     {
         private readonly JmesPathExpression left_;
         private readonly JmesPathExpression right_;

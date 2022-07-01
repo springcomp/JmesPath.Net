@@ -5,6 +5,9 @@ namespace DevLab.JmesPath.Expressions
 {
     public class JmesPathRawString : JmesPathExpression
     {
+        public override string ExpressionType
+            => "raw-string";
+
         public JmesPathRawString(string value)
         {
             Value = value;

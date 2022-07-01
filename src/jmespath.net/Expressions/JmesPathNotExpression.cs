@@ -4,6 +4,9 @@ namespace DevLab.JmesPath.Expressions
 {
     public class JmesPathNotExpression : JmesPathSimpleExpression
     {
+        public override string ExpressionType
+            => "not-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathNotExpression"/>
         /// that negates the result of evaluating its associated expression.

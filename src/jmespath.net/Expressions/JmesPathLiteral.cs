@@ -8,6 +8,9 @@ namespace DevLab.JmesPath.Expressions
     {
         private readonly JToken value_;
 
+        public override string ExpressionType
+            => "literal";
+
         public JmesPathLiteral(JToken value)
         {
             value_ = value;

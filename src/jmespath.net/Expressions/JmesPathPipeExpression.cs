@@ -7,6 +7,9 @@ namespace DevLab.JmesPath.Expressions
     /// </summary>
     public class JmesPathPipeExpression : JmesPathCompoundExpression
     {
+        public override string ExpressionType
+            => "pipe-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathPipeExpression"/> class
         /// with two <see cref="JmesPathExpression"/> objects.

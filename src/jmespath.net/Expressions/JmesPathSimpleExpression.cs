@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DevLab.JmesPath.Expressions
 {
-    public class JmesPathSimpleExpression : JmesPathExpression
+    public abstract class JmesPathSimpleExpression : JmesPathExpression
     {
         private readonly JmesPathExpression expression_;
 

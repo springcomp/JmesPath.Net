@@ -4,6 +4,9 @@ namespace DevLab.JmesPath.Expressions
 {
     public class JmesPathAndExpression : JmesPathCompoundExpression
     {
+        public override string ExpressionType
+            => "and-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathAndExpression"/> class
         /// with two <see cref="JmesPathAndExpression"/> objects.

@@ -4,6 +4,9 @@ namespace DevLab.JmesPath.Expressions
 {
     public abstract class JmesPathComparison : JmesPathCompoundExpression
     {
+        public override string ExpressionType
+            => "comparator-expression";
+
         /// <summary>
         /// Initialize a new instance of the <see cref="JmesPathComparison" /> class
         /// that performs a comparison between two specified expressions.

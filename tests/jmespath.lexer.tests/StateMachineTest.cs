@@ -1,0 +1,116 @@
+﻿using jmespath.lexer.StateMachines;
+using Xunit;
+
+namespace jmespath.lexer.tests;
+
+public class StateMachineTest
+{
+    [Fact]
+    public void StateMachine_Run_Bracket()
+    {
+        var machine = new BracketToken();
+
+        AssertMatch(machine.Match("["), "[");
+        AssertMatch(machine.Match("[]"), "[]");
+        AssertMatch(machine.Match("[?"), "[?");
+
+        AssertMatch(machine.Match("[ ?"), "[");
+
+        AssertMatch(machine.Match("] ?"), null);
+    }
+
+    [Fact]
+    public void StateMachine_Run_Number()
+    {
+        var machine = new Number();
+
+        AssertMatch(machine.Match("-0"), "-0");
+        AssertMatch(machine.Match("0"), "0");
+
+        AssertMatch(machine.Match("42"), "42");
+        AssertMatch(machine.Match("-42"), "-42");
+
+        AssertMatch(machine.Match("-"), null);
+    }
+
+    [Fact]
+    public void StateMachine_Run_LiteralString()
+    {
+        var machine = new LiteralString();
+
+        AssertMatch(machine.Match("`hello`"), "`hello`");
+        AssertMatch(machine.Match("`hello`.world"), "`hello`");
+        AssertMatch(machine.Match("`hello\\` world!`"), "`hello\\` world!`");
+
+        AssertMatch(machine.Match("foo"), null);
+
+        AssertMatch(machine.Match("``"), null); // empty literal string is forbidden
+    }
+
+    [Fact]
+    public void StateMachine_Run_QuotedString()
+    {
+        var machine = new QuotedString();
+
+        AssertMatch(machine.Match("\"hello, world!\""), "\"hello, world!\"");
+
+        AssertMatch(machine.Match("\"hello\\\"world!\\\"\""), "\"hello\\\"world!\\\"\"");
+        AssertMatch(machine.Match("\"hello\\\\world\""), "\"hello\\\\world\"");
+        AssertMatch(machine.Match("\"hello\\/world\""), "\"hello\\/world\"");
+        AssertMatch(machine.Match("\"hello\\bworld\""), "\"hello\\bworld\"");
+        AssertMatch(machine.Match("\"hello\\fworld\""), "\"hello\\fworld\"");
+        AssertMatch(machine.Match("\"hello\\nworld\""), "\"hello\\nworld\"");
+        AssertMatch(machine.Match("\"hello\\rworld\""), "\"hello\\rworld\"");
+        AssertMatch(machine.Match("\"hello\\tworld\""), "\"hello\\tworld\"");
+        AssertMatch(machine.Match("\"Are you \\u2713 ?\""), "\"Are you \\u2713 ?\"");
+
+        // '\b' or '\f' are whitespace characters whereas
+        // '\ubfbf' is a unicode character
+
+        AssertMatch(machine.Match("\"\\ubfbf \\f \\b \\ufbfb \""), "\"\\ubfbf \\f \\b \\ufbfb \"");
+
+        AssertMatch(machine.Match("\"\\\"\""), "\"\\\"\"");
+
+        AssertMatch(machine.Match("\"\""), null); // empty quoted string is forbidden
+    }
+
+    [Fact]
+    public void StateMachine_Run_RawString()
+    {
+        var machine = new RawString();
+
+        AssertMatch(machine.Match("''"), "''");
+        AssertMatch(machine.Match("'hello, world!'"), "'hello, world!'");
+        AssertMatch(machine.Match("'\\h\\e\\l\\l\\o\\,\\ \\w\\o\\r\\l\\d\\!'"), "'\\h\\e\\l\\l\\o\\,\\ \\w\\o\\r\\l\\d\\!'");
+
+        AssertMatch(machine.Match("'\\''"), "'\\''");
+        AssertMatch(machine.Match("'\\\\'"), "'\\\\'");
+    }
+
+    [Fact]
+    public void StateMachine_Run_UnquotedString()
+    {
+        var machine = new UnquotedString();
+
+        AssertMatch(machine.Match("foo"), "foo");
+        AssertMatch(machine.Match("_foo"), "_foo");
+        AssertMatch(machine.Match("_foo_bar"), "_foo_bar");
+        AssertMatch(machine.Match("_foo_bar42"), "_foo_bar42");
+
+        AssertMatch(machine.Match("_foo_bar42.other"), "_foo_bar42");
+
+        AssertMatch(machine.Match("42_foo"), null);
+    }
+
+    private static void AssertMatch(Match match, string? expected = null)
+    {
+        if (expected == null)
+            Assert.False(match.Success);
+
+        else
+        {
+            Assert.True(match.Success);
+            Assert.Equal(expected, match.Text);
+        }
+    }
+}

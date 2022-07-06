@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\jmespath.lexer\jmespath.lexer.csproj" />
+    <ProjectReference Include="..\jmespath.net.interop\jmespath.net.interop.csproj" />
   </ItemGroup>
 
   <ItemGroup>

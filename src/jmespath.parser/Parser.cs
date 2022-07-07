@@ -336,7 +336,6 @@ public static partial class JMESPath
             }
 
             succeeded = OnMultiSelectList(parser);
-            System.Diagnostics.Debug.Assert(!postfix);
 
         } while (false);
 
@@ -458,8 +457,8 @@ public static partial class JMESPath
         // special case: "[*]" on the right-hand-side of a sub-expression is a multi-select-list
 
         var (k1, t1) = parser.Lookahead(0);
-        var (k2, t2) = k1 == TokenType.EOF ? (k1, t1) : parser.Lookahead(1);
-        var (k3, _) = k2 == TokenType.EOF ? (k2, t2) : parser.Lookahead(2);
+        var (k2, t2) = IsTokenInvalid(k1) ? (k1, t1) : parser.Lookahead(1);
+        var (k3, _) = IsTokenInvalid(k2) ? (k2, t2) : parser.Lookahead(2);
 
         if (k1 == TokenType.T_LBRACKET && k2 == TokenType.T_STAR && k3 == TokenType.T_RBRACKET)
         {
@@ -470,6 +469,19 @@ public static partial class JMESPath
         else
         {
             succeeded = parser.Parse(Precedence.T_DOT); // TODO error
+        }
+
+        var expressionType = parser.State.ExpressionType;
+        if (!new[]{
+            "function-expression",
+            "hash-wildcard-projection",
+            "identifier",
+            "index-expression",
+            "multi-select-hash",
+            "multi-select-list",
+        }.Contains(expressionType))
+        {
+            throw Error.Syntax(expressionType, parser.GetLocation());
         }
 
         parser.State.OnSubExpression();

@@ -48,6 +48,7 @@ public static partial class JMESPath
     
         // everything above stops a projection
 
+        public const int T_LBRACKET = 35;
         public const int T_NOT = 45;
     }
 
@@ -118,6 +119,9 @@ public static partial class JMESPath
         public static readonly PrefixParselet MultiSelectHash =
             (_, parser) => OnMultiSelectHash(parser);
 
+        public static readonly PrefixParselet BracketSpecifier =
+            (_, parser) => OnBracketSpecifier(parser, postfix: false);
+
         // infix / postfix parselets
 
         public static InfixParselet PipeExpression =
@@ -186,6 +190,9 @@ public static partial class JMESPath
                 parser.State.OnComparisonNotEqual();
                 return succeeded;
             };
+
+        public static readonly InfixParselet BracketSpecifierPostfix =
+            (_, _, parser) => OnBracketSpecifier(parser, postfix: true);
     }
 
     sealed class Spec : IEnumerable
@@ -215,6 +222,8 @@ public static partial class JMESPath
             { TokenType.T_LBRACE, Parselets.MultiSelectHash },
             { TokenType.T_LPAREN, Parselets.ParenExpression },
 
+            { TokenType.T_LBRACKET, Parselets.BracketSpecifier },
+
             // infix / postfix parselets
 
             { TokenType.T_PIPE, Precedence.T_PIPE, Parselets.PipeExpression },
@@ -227,6 +236,8 @@ public static partial class JMESPath
             { TokenType.T_LE, Precedence.T_LE, Parselets.ComparatorLesserThanOrEqualExpression },
             { TokenType.T_LT, Precedence.T_LT, Parselets.ComparatorLesserThanExpression },
             { TokenType.T_NE, Precedence.T_NE, Parselets.ComparatorNotEqualExpression },
+
+            { TokenType.T_LBRACKET, Precedence.T_LBRACKET, Parselets.BracketSpecifierPostfix },
         };
 
         readonly Dictionary<TokenType, PrefixParselet> _prefixes = new();
@@ -263,6 +274,126 @@ public static partial class JMESPath
     }
 
     #region Implementation
+
+    private static bool OnBracketSpecifier(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, bool postfix = true)
+    {
+        var succeeded = false;
+
+        do
+        {
+            var (k1, t1) = parser.Lookahead();
+            var (k2, _) = k1 == TokenType.EOF ? (k1, t1) : parser.Lookahead(1);
+
+            if (k1 == TokenType.T_COLON || k2 == TokenType.T_COLON)
+            {
+                var parts = OnSliceExpression(parser, new Token?[3] { null, null, null });
+                parser.State.OnSliceExpression((int?)parts[0]?.Value, (int?)parts[1]?.Value, (int?)parts[2]?.Value);
+                succeeded = true;
+                break;
+            }
+
+            else if (k1 == TokenType.T_NUMBER)
+            {
+                var number = parser.Read(TokenType.T_NUMBER, delegate { throw new Exception(); });
+                parser.State.OnIndex((int)number.Value);
+                succeeded = true;
+                break;
+            }
+
+            else if (k1 == TokenType.T_STAR && k2 == TokenType.T_RBRACKET)
+            {
+                parser.Read();
+
+                parser.State.OnListWildcardProjection();
+
+                succeeded = true;
+                break;
+            }
+
+            succeeded = OnMultiSelectList(parser);
+            System.Diagnostics.Debug.Assert(!postfix);
+
+        } while (false);
+
+        if (succeeded)
+        {
+            if (postfix)
+            {
+                if (postfix)
+                    parser.State.OnIndexExpression();
+                parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
+            }
+            parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
+        }
+
+        return succeeded;
+    }
+
+    private static bool OnMultiSelectList(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser)
+    {
+        var succeeded = false;
+
+        parser.State.PushMultiSelectList();
+
+        while (true)
+        {
+            succeeded = parser.Parse(0); // TODO error
+            parser.State.AddMultiSelectListExpression();
+
+            // move to next expression
+
+            var (tokenType, nextToken) = parser.Peek();
+
+            if (tokenType == TokenType.T_RBRACKET)
+                break;
+
+            if (tokenType != TokenType.T_COMMA)
+                throw Error.Syntax(nextToken);
+
+            parser.Read();
+        }
+
+        if (succeeded)
+            parser.State.PopMultiSelectList();
+
+        return succeeded;
+    }
+
+    private static Token?[] OnSliceExpression(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, Token?[] tokens)
+    {
+        System.Diagnostics.Debug.Assert(tokens.Length == 3);
+
+        var index = 0;
+        while (index < 3)
+        {
+            var (kind, token) = parser.Peek();
+            if (kind == TokenType.T_RBRACKET)
+                break;
+
+            if (kind == TokenType.T_COLON)
+            {
+                index++;
+                if (index == 3)
+                    throw Error.Syntax(token);
+
+                parser.Read();
+            }
+
+            else if (kind == TokenType.T_NUMBER)
+            {
+                tokens[index] = token;
+                parser.Read();
+            }
+
+            else
+                throw Error.Syntax(token);
+        }
+
+        if (tokens[2] != null && (int)(tokens[2]!.Value) == 0)
+            throw Error.Syntax("invalid-value: a slice projection step cannot be 0.", tokens[2]!.Type, tokens[2]!.Location);
+
+        return tokens;
+    }
 
     private static bool OnFunctionCall(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, string functionName)
     {

@@ -50,6 +50,8 @@ public static partial class JMESPath
     
         // everything above stops a projection
 
+        public const int T_FILTER = 21;
+
         public const int T_LBRACKET = 35;
         public const int T_NOT = 45;
     }
@@ -125,6 +127,8 @@ public static partial class JMESPath
             (_, parser) => OnBracketSpecifier(parser, postfix: false);
         public static readonly PrefixParselet FlattenProjection =
             (_, parser) => OnFlattenProjection(parser, postfix: false);
+        public static readonly PrefixParselet FilterProjection =
+            (_, parser) => OnFilterProjection(parser, postfix: false);
 
         // infix / postfix parselets
 
@@ -199,6 +203,8 @@ public static partial class JMESPath
             (_, _, parser) => OnBracketSpecifier(parser, postfix: true);
         public static readonly InfixParselet FlattenProjectionPostfix =
             (_, _, parser) => OnFlattenProjection(parser, postfix: true);
+        public static readonly InfixParselet FilterProjectionPostfix =
+            (_, _, parser) => OnFilterProjection(parser, postfix: true);
     }
 
     sealed class Spec : IEnumerable
@@ -230,6 +236,7 @@ public static partial class JMESPath
 
             { TokenType.T_LBRACKET, Parselets.BracketSpecifier },
             { TokenType.T_FLATTEN, Parselets.FlattenProjection },
+            { TokenType.T_FILTER, Parselets.FilterProjection },
 
             // infix / postfix parselets
 
@@ -246,6 +253,7 @@ public static partial class JMESPath
 
             { TokenType.T_LBRACKET, Precedence.T_LBRACKET, Parselets.BracketSpecifierPostfix },
             { TokenType.T_FLATTEN, Precedence.T_FLATTEN, Parselets.FlattenProjectionPostfix },
+            { TokenType.T_FILTER, Precedence.T_FILTER, Parselets.FilterProjectionPostfix },
         };
 
         readonly Dictionary<TokenType, PrefixParselet> _prefixes = new();
@@ -410,6 +418,19 @@ public static partial class JMESPath
             parser.State.OnIndexExpression();
 
         return true;
+    }
+
+    private static bool OnFilterProjection(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, bool postfix = true)
+    {
+        var succeeded = parser.Parse(0); // TODO: error
+
+        parser.State.OnFilterProjection();
+        if (postfix)
+            parser.State.OnIndexExpression();
+
+        parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
+
+        return succeeded;
     }
 
     private static bool OnFunctionCall(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, string functionName)

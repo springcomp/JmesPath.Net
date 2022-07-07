@@ -297,6 +297,9 @@ public static partial class JMESPath
 
     #region Implementation
 
+    private static bool IsTokenInvalid(TokenType kind)
+        => kind == TokenType.EOF || kind == TokenType.E_UNRECOGNIZED;
+
     private static bool OnBracketSpecifier(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, bool postfix = true)
     {
         var succeeded = false;
@@ -304,7 +307,7 @@ public static partial class JMESPath
         do
         {
             var (k1, t1) = parser.Lookahead();
-            var (k2, _) = k1 == TokenType.EOF ? (k1, t1) : parser.Lookahead(1);
+            var (k2, _) = IsTokenInvalid(k1) ? (k1, t1) : parser.Lookahead(1);
 
             if (k1 == TokenType.T_COLON || k2 == TokenType.T_COLON)
             {
@@ -341,9 +344,18 @@ public static partial class JMESPath
         {
             if (postfix)
             {
-                if (postfix)
-                    parser.State.OnIndexExpression();
-                parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
+                var expressionType = parser.State.ExpressionType;
+                if (!new[]{
+                        "flatten-projection",
+                        "index",
+                        "list-filter-expression",
+                        "list-wildcard-projection",
+                        "slice-projection",
+                    }.Contains(expressionType))
+                {
+                    throw Error.Syntax(expressionType, parser.GetLocation());
+                }
+                parser.State.OnIndexExpression();
             }
             parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
         }

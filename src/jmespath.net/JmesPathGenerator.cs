@@ -7,7 +7,7 @@ using DevLab.JmesPath.Interop;
 
 namespace DevLab.JmesPath
 {
-    sealed class JmesPathGenerator : IJmesPathGenerator
+    sealed class JmesPathGenerator : IJmesPathGenerator2
     {
         /// <summary>
         /// holds the functions available to the parser
@@ -37,6 +37,9 @@ namespace DevLab.JmesPath
         }
 
         public JmesPathExpression Expression => expression_;
+
+        public bool InFunctionArg
+            => functions_.Any();
 
         public void OnExpression()
         {

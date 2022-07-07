@@ -53,6 +53,7 @@ public static partial class JMESPath
         public const int T_FILTER = 21;
 
         public const int T_LBRACKET = 35;
+        public const int T_DOT = 40;
         public const int T_NOT = 45;
     }
 
@@ -205,6 +206,9 @@ public static partial class JMESPath
             (_, _, parser) => OnFlattenProjection(parser, postfix: true);
         public static readonly InfixParselet FilterProjectionPostfix =
             (_, _, parser) => OnFilterProjection(parser, postfix: true);
+
+        public static InfixParselet SubExpression =
+            (_, _, parser) => OnSubExpression(parser);
     }
 
     sealed class Spec : IEnumerable
@@ -254,6 +258,8 @@ public static partial class JMESPath
             { TokenType.T_LBRACKET, Precedence.T_LBRACKET, Parselets.BracketSpecifierPostfix },
             { TokenType.T_FLATTEN, Precedence.T_FLATTEN, Parselets.FlattenProjectionPostfix },
             { TokenType.T_FILTER, Precedence.T_FILTER, Parselets.FilterProjectionPostfix },
+
+            { TokenType.T_DOT, Precedence.T_DOT, Parselets.SubExpression },
         };
 
         readonly Dictionary<TokenType, PrefixParselet> _prefixes = new();
@@ -430,6 +436,31 @@ public static partial class JMESPath
 
         parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
 
+        return succeeded;
+    }
+
+    private static bool OnSubExpression(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser)
+    {
+        var succeeded = false;
+
+        // special case: "[*]" on the right-hand-side of a sub-expression is a multi-select-list
+
+        var (k1, t1) = parser.Lookahead(0);
+        var (k2, t2) = k1 == TokenType.EOF ? (k1, t1) : parser.Lookahead(1);
+        var (k3, _) = k2 == TokenType.EOF ? (k2, t2) : parser.Lookahead(2);
+
+        if (k1 == TokenType.T_LBRACKET && k2 == TokenType.T_STAR && k3 == TokenType.T_RBRACKET)
+        {
+            parser.Read();
+            succeeded = OnMultiSelectList(parser); // TODO error
+            parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
+        }
+        else
+        {
+            succeeded = parser.Parse(Precedence.T_DOT); // TODO error
+        }
+
+        parser.State.OnSubExpression();
         return succeeded;
     }
 

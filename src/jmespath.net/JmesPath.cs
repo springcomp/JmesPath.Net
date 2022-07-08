@@ -71,6 +71,25 @@ namespace DevLab.JmesPath
             }
         }
 
+#if NET6_0
+        public Expression Parse(string expression)
+        {
+            var analyzer = new JmesPathGenerator(repository_);
+            JMESPath.Parse(expression, analyzer);
+
+            // perform post-parsing syntax validation
+
+            var syntax = new SyntaxVisitor();
+            analyzer.Expression.Accept(syntax);
+
+            // inject scope evaluator to all expressions
+
+            var evaluator = new ContextEvaluatorVisitor(evaluator_); 
+            analyzer.Expression.Accept(evaluator);
+
+            return new Expression(analyzer.Expression);
+        }
+#else
         public Expression Parse(string expression)
         {
             return Parse(new MemoryStream(_encoding.GetBytes(expression)));
@@ -93,6 +112,7 @@ namespace DevLab.JmesPath
 
             return new Expression(analyzer.Expression);
         }
+#endif
 
         public static JToken ParseJson(string input)
         {

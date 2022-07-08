@@ -1,4 +1,9 @@
+#if NET6_0
+using jmespath.lexer.Utils;
+#else
 using DevLab.JmesPath.Utils;
+#endif
+
 using Xunit;
 
 namespace jmespath.net.tests.Utils

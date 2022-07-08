@@ -5,7 +5,7 @@
     <AssemblyTitle>JmesPath.Net</AssemblyTitle>
     <VersionPrefix>42.43.44</VersionPrefix>
     <Authors>Jeremie Devillard;Maxime Labelle</Authors>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net45;net6.0</TargetFrameworks>
     <AssemblyName>JmesPath.Net</AssemblyName>
     <AssemblyOriginatorKeyFile>../jmespath.net.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -33,8 +33,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3' Or '$(TargetFramework)' == 'net45' ">
     <ProjectReference Include="..\jmespath.net.parser\jmespath.net.parser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <ProjectReference Include="..\jmespath.parser\jmespath.parser.csproj" />
   </ItemGroup>
 
 </Project>

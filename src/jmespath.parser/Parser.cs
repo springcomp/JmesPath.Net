@@ -302,6 +302,19 @@ public static partial class JMESPath
 
     private static bool OnBracketSpecifier(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser, bool postfix = true)
     {
+        // the grammar does not specify this but the canonical
+        // implementation accepts constructs that consist of
+        // projections immediately followed by a multi_select_list.
+        // these constructs should be separated with a T_DOT
+        // because these really are sub_expressions in disguise.
+
+        var projection = new[] {
+            "flatten-projection",
+            "hash-wildcard-projection",
+            "list-filter-expression",
+            "list-wildcard-projection",
+        }.Contains(parser.State.ExpressionType);
+
         var succeeded = false;
 
         do
@@ -344,21 +357,28 @@ public static partial class JMESPath
             if (postfix)
             {
                 var expressionType = parser.State.ExpressionType;
-                if (!new[]{
+                if (projection && expressionType == "multi-select-list")
+                {
+                    parser.State.OnSubExpression();
+                }
+                else
+                {
+                    if (!new[]{
                         "flatten-projection",
                         "index",
                         "list-filter-expression",
                         "list-wildcard-projection",
                         "slice-projection",
                     }.Contains(expressionType))
-                {
-                    throw Error.Syntax(expressionType, parser.GetLocation());
+                    {
+                        throw Error.Syntax(expressionType, parser.GetLocation());
+                    }
+                    parser.State.OnIndexExpression();
                 }
-                parser.State.OnIndexExpression();
             }
+
             parser.Read(TokenType.T_RBRACKET, parser.Missing(TokenType.T_RBRACKET));
         }
-
         return succeeded;
     }
 

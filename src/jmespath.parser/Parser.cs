@@ -571,13 +571,11 @@ public static partial class JMESPath
 
     private static bool OnKeyValExpression(Gratt.Parser<IJmesPathGenerator2, TokenType, Token, int, bool> parser)
     {
-        var (tokenType, nextToken) = parser.Peek();
-        if (!new[] { TokenType.T_USTRING, TokenType.T_QSTRING, }.Contains(tokenType))
-            throw JMESPath.Error.Syntax(nextToken);
-
         // parse identifier
 
         var succeeded = parser.Parse(0); // TODO error
+        if (parser.State.ExpressionType != "identifier")
+            throw Error.Syntax(parser.State.ExpressionType, parser.GetLocation());
 
         parser.Read(TokenType.T_COLON, delegate { throw JMESPath.Error.Missing(TokenType.T_COLON, parser.GetLocation()); });
 

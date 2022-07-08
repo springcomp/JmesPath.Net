@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>jmespath.parser</id>
+    <version>42.43.44</version>
+    <title>JMESPath Parser</title>
+    <authors>Jeremie Devillard;Maxime Labelle</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/jdevillard/JmesPath.Net</projectUrl>
+    <description>Vaughan R. Pratt Top-down precedence parser for JMESPath.Net, a fully compliant JMESPATH parser for .NET.</description>
+    <tags>JMESPath JSON Parser</tags>
+    <dependencies>
+      <group targetFramework="net6.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Debug\net6.0\*.*" target="lib\net6.0" />
+  </files>
+</package>

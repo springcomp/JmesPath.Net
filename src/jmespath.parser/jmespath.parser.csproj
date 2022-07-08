@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <VersionPrefix>42.43.44</VersionPrefix>
+    <NuspecFile>./jmespath.parser.nuspec</NuspecFile>
   </PropertyGroup>
 
   <ItemGroup>

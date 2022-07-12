@@ -319,8 +319,8 @@ public static partial class JMESPath
 
         do
         {
-            var (k1, t1) = parser.Lookahead();
-            var (k2, _) = IsTokenInvalid(k1) ? (k1, t1) : parser.Lookahead(1);
+            var (k1, t1) = parser.Peek();
+            var (k2, _) = IsTokenInvalid(k1) ? (k1, t1) : parser.Peek(1);
 
             if (k1 == TokenType.T_COLON || k2 == TokenType.T_COLON)
             {
@@ -474,13 +474,11 @@ public static partial class JMESPath
     {
         var succeeded = false;
 
-        // special case: "[*]" on the right-hand-side of a sub-expression is a multi-select-list
+        // special case: "[" on the right-hand-side of a sub-expression starts a multi-select-list
 
-        var (k1, t1) = parser.Lookahead(0);
-        var (k2, t2) = IsTokenInvalid(k1) ? (k1, t1) : parser.Lookahead(1);
-        var (k3, _) = IsTokenInvalid(k2) ? (k2, t2) : parser.Lookahead(2);
+        var (k1, t1) = parser.Peek();
 
-        if (k1 == TokenType.T_LBRACKET && k2 == TokenType.T_STAR && k3 == TokenType.T_RBRACKET)
+        if (k1 == TokenType.T_LBRACKET)
         {
             parser.Read();
             succeeded = OnMultiSelectList(parser); // TODO error

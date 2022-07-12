@@ -1,4 +1,4 @@
-﻿#region Copyright (c) 2019 Atif Aziz. All rights reserved.
+#region Copyright (c) 2019 Atif Aziz. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +18,14 @@ namespace Gratt
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using Unit = System.ValueTuple;
 
     static partial class Parser
     {
-        public const int LOOKAHEAD_TOKEN_COUNT = 3;
-
         /// <summary>
-        /// Parses tokens into a result using top-down operator precedence. A
-        /// default comparer is used to compare precedence for order and token
-        /// kinds for equality.
+        /// Parses tokens into a result using top-down operator precedence. A default comparer is
+        /// used to compare precedence for order and token kinds for equality.
         /// </summary>
         /// <typeparam name="TKind">The type of token kinds.</typeparam>
         /// <typeparam name="TToken">The type of tokens.</typeparam>
@@ -36,27 +34,24 @@ namespace Gratt
         /// <param name="initialPrecedence">The initial precedence.</param>
         /// <param name="eoi">A token kind that marks the end of input.</param>
         /// <param name="eoiErrorSelector">
-        /// A function that projects an <see cref="Exception"/> when the
-        /// end-of-input token is not the the last token of the
-        /// <paramref name="tokens"/> sequence.</param>
+        /// A function that projects an <see cref="Exception"/> when the end-of-input token is not
+        /// the the last token of the <paramref name="tokens"/> sequence.</param>
         /// <param name="prefixSelector">
-        /// A function that maps a token to a prefix parser function. If the
-        /// given token is not a prefix then the function must fail by throwing
-        /// an <see cref="Exception"/> or derived object. The prefix parser
-        /// function receives the token and parser as arguments and returns
-        /// the result of parsing.</param>
+        /// A function that maps a token to a prefix parser function. If the given token is not a
+        /// prefix then the function must fail by throwing an <see cref="Exception"/> or derived
+        /// object. The prefix parser function receives the token and parser as arguments and
+        /// returns the result of parsing.</param>
         /// <param name="infixSelector">
-        /// A function that attempts to map a token to an infix parser
-        /// function. The infix parser function receives the token, the left
-        /// operand/result and parser as arguments and returns the result of
-        /// parsing.</param>
+        /// A function that attempts to map a token to an infix parser function. The infix parser
+        /// function receives the token, the left operand/result and parser as arguments and returns
+        /// the result of parsing.</param>
         /// <param name="tokens">
         /// A sequence of token kind and token pairs produced by a tokens.</param>
         /// <returns>The result of parsing.</returns>
         /// <remarks>
-        /// The last token kind and token pair yielded by the <see cref="tokens"/>
-        /// must represent the end-of-input otherwise the behavior of this
-        /// function, and by extension parsing, is undefined.
+        /// The last token kind and token pair yielded by the <see cref="tokens"/> must represent
+        /// the end-of-input otherwise the behavior of this function, and by extension parsing, is
+        /// undefined.
         /// </remarks>
 
         public static TResult
@@ -67,12 +62,11 @@ namespace Gratt
                 Func<TKind, TToken, (TPrecedence, Func<TToken, TResult, Parser<Unit, TKind, TToken, TPrecedence, TResult>, TResult>)?> infixSelector,
                 IEnumerable<(TKind, TToken)> tokens) =>
             Parse(default(Unit), initialPrecedence, eoi, eoiErrorSelector,
-                  (k, t, s) => prefixSelector(k, t), (k, t, s) => infixSelector(k, t), tokens);
+                  (k, t, _) => prefixSelector(k, t), (k, t, _) => infixSelector(k, t), tokens);
 
         /// <summary>
-        /// Parses tokens into a result using top-down operator precedence.
-        /// Additional parameters specify how precedence compares in order and
-        /// token kind in terms of equality.
+        /// Parses tokens into a result using top-down operator precedence. Additional parameters
+        /// specify how precedence compares in order and token kind in terms of equality.
         /// </summary>
         /// <typeparam name="TKind">The type of token kinds.</typeparam>
         /// <typeparam name="TToken">The type of tokens.</typeparam>
@@ -80,34 +74,31 @@ namespace Gratt
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="initialPrecedence">The initial precedence.</param>
         /// <param name="precedenceComparer">
-        /// An <see cref="IComparer{T}"/> to use to compare one precedence
-        /// with another for order.</param>
+        /// An <see cref="IComparer{T}"/> to use to compare one precedence with another for
+        /// order.</param>
         /// <param name="kindEqualityComparer">
-        /// An <see cref="IEqualityComparer{T}"/> to use to compare one token
-        /// kind with another for equality.</param>
+        /// An <see cref="IEqualityComparer{T}"/> to use to compare one token kind with another for
+        /// equality.</param>
         /// <param name="eoi">A token kind that marks the end of input.</param>
         /// <param name="eoiErrorSelector">
-        /// A function that projects an <see cref="Exception"/> when the
-        /// end-of-input token is not the the last token of the
-        /// <paramref name="tokens"/> sequence.</param>
+        /// A function that projects an <see cref="Exception"/> when the end-of-input token is not
+        /// the the last token of the <paramref name="tokens"/> sequence.</param>
         /// <param name="prefixSelector">
-        /// A function that maps a token to a prefix parser function. If the
-        /// given token is not a prefix then the function must fail by throwing
-        /// an <see cref="Exception"/> or derived object. The prefix parser
-        /// function receives the token and parser as arguments and returns
-        /// the result of parsing.</param>
+        /// A function that maps a token to a prefix parser function. If the given token is not a
+        /// prefix then the function must fail by throwing an <see cref="Exception"/> or derived
+        /// object. The prefix parser function receives the token and parser as arguments and
+        /// returns the result of parsing.</param>
         /// <param name="infixSelector">
-        /// A function that attempts to map a token to an infix parser
-        /// function. The infix parser function receives the token, the left
-        /// operand/result and parser as arguments and returns the result of
-        /// parsing.</param>
+        /// A function that attempts to map a token to an infix parser function. The infix parser
+        /// function receives the token, the left operand/result and parser as arguments and returns
+        /// the result of parsing.</param>
         /// <param name="tokens">
         /// A sequence of token kind and token pairs produced by a tokens.</param>
         /// <returns>The result of parsing.</returns>
         /// <remarks>
-        /// The last token kind and token pair yielded by the <see cref="tokens"/>
-        /// must represent the end-of-input otherwise the behavior of this
-        /// function, and by extension parsing, is undefined.
+        /// The last token kind and token pair yielded by the <see cref="tokens"/> must represent
+        /// the end-of-input otherwise the behavior of this function, and by extension parsing, is
+        /// undefined.
         /// </remarks>
 
         public static TResult
@@ -120,14 +111,13 @@ namespace Gratt
                 IEnumerable<(TKind, TToken)> tokens) =>
             Parse(default(Unit), initialPrecedence, precedenceComparer, kindEqualityComparer,
                   eoi, eoiErrorSelector,
-                  (k, t, s) => prefixSelector(k, t), (k, t, s) => infixSelector(k, t), tokens);
+                  (k, t, _) => prefixSelector(k, t), (k, t, _) => infixSelector(k, t), tokens);
 
         /// <summary>
-        /// Parses tokens into a result using top-down operator precedence. A
-        /// default comparer is used to compare precedence for order and token
-        /// kinds for equality. An additional parameter specifies some user-
-        /// defined state to associate with the parser object used during
-        /// parsing.
+        /// Parses tokens into a result using top-down operator precedence. A default comparer is
+        /// used to compare precedence for order and token kinds for equality. An additional
+        /// parameter specifies some user- defined state to associate with the parser object used
+        /// during parsing.
         /// </summary>
         /// <typeparam name="TState">The type of user-defined state object.</typeparam>
         /// <typeparam name="TKind">The type of token kinds.</typeparam>
@@ -138,27 +128,24 @@ namespace Gratt
         /// <param name="initialPrecedence">The initial precedence.</param>
         /// <param name="eoi">A token kind that marks the end of input.</param>
         /// <param name="eoiErrorSelector">
-        /// A function that projects an <see cref="Exception"/> when the
-        /// end-of-input token is not the the last token of the
-        /// <paramref name="tokens"/> sequence.</param>
+        /// A function that projects an <see cref="Exception"/> when the end-of-input token is not
+        /// the the last token of the <paramref name="tokens"/> sequence.</param>
         /// <param name="prefixSelector">
-        /// A function that maps a token to a prefix parser function. If the
-        /// given token is not a prefix then the function must fail by throwing
-        /// an <see cref="Exception"/> or derived object. The prefix parser
-        /// function receives the token and parser as arguments and returns
-        /// the result of parsing.</param>
+        /// A function that maps a token to a prefix parser function. If the given token is not a
+        /// prefix then the function must fail by throwing an <see cref="Exception"/> or derived
+        /// object. The prefix parser function receives the token and parser as arguments and
+        /// returns the result of parsing.</param>
         /// <param name="infixSelector">
-        /// A function that attempts to map a token to an infix parser
-        /// function. The infix parser function receives the token, the left
-        /// operand/result and parser as arguments and returns the result of
-        /// parsing.</param>
+        /// A function that attempts to map a token to an infix parser function. The infix parser
+        /// function receives the token, the left operand/result and parser as arguments and returns
+        /// the result of parsing.</param>
         /// <param name="tokens">
         /// A sequence of token kind and token pairs produced by a tokens.</param>
         /// <returns>The result of parsing.</returns>
         /// <remarks>
-        /// The last token kind and token pair yielded by the <see cref="tokens"/>
-        /// must represent the end-of-input otherwise the behavior of this
-        /// function, and by extension parsing, is undefined.
+        /// The last token kind and token pair yielded by the <see cref="tokens"/> must represent
+        /// the end-of-input otherwise the behavior of this function, and by extension parsing, is
+        /// undefined.
         /// </remarks>
 
         public static TResult
@@ -174,10 +161,9 @@ namespace Gratt
                   prefixSelector, infixSelector, tokens);
 
         /// <summary>
-        /// Parses tokens into a result using top-down operator precedence.
-        /// Additional parameters specify how precedence compares in order,
-        /// how token kinds compare in terms of equality and some user-defined
-        /// state to associate with the parser object used during parsing.
+        /// Parses tokens into a result using top-down operator precedence. Additional parameters
+        /// specify how precedence compares in order, how token kinds compare in terms of equality
+        /// and some user-defined state to associate with the parser object used during parsing.
         /// </summary>
         /// <typeparam name="TState">The type of user-defined state object.</typeparam>
         /// <typeparam name="TKind">The type of token kinds.</typeparam>
@@ -187,35 +173,33 @@ namespace Gratt
         /// <param name="state">A user-defined state.</param>
         /// <param name="initialPrecedence">The initial precedence.</param>
         /// <param name="precedenceComparer">
-        /// An <see cref="IComparer{T}"/> to use to compare one precedence
-        /// with another for order.</param>
+        /// An <see cref="IComparer{T}"/> to use to compare one precedence with another for
+        /// order.</param>
         /// <param name="kindEqualityComparer">
-        /// An <see cref="IEqualityComparer{T}"/> to use to compare one token
-        /// kind with another for equality.</param>
+        /// An <see cref="IEqualityComparer{T}"/> to use to compare one token kind with another for
+        /// equality.</param>
         /// <param name="eoi">A token kind that marks the end of input.</param>
         /// <param name="eoiErrorSelector">
-        /// A function that projects an <see cref="Exception"/> when the
-        /// end-of-input token is not the the last token of the
-        /// <paramref name="tokens"/> sequence.</param>
+        /// A function that projects an <see cref="Exception"/> when the end-of-input token is not
+        /// the the last token of the <paramref name="tokens"/> sequence.</param>
         /// <param name="prefixSelector">
-        /// A function that maps a token to a prefix parser function. If the
-        /// given token is not a prefix then the function must fail by throwing
-        /// an <see cref="Exception"/> or derived object. The prefix parser
-        /// function receives the token and parser as arguments and returns
-        /// the result of parsing.</param>
+        /// A function that maps a token to a prefix parser function. If the given token is not a
+        /// prefix then the function must fail by throwing an <see cref="Exception"/> or derived
+        /// object. The prefix parser function receives the token and parser as arguments and
+        /// returns the result of parsing.</param>
         /// <param name="infixSelector">
-        /// A function that attempts to map a token to an infix parser
-        /// function. The infix parser function receives the token, the left
-        /// operand/result and parser as arguments and returns the result of
-        /// parsing.</param>
+        /// A function that attempts to map a token to an infix parser function. The infix parser
+        /// function receives the token, the left operand/result and parser as arguments and returns
+        /// the result of parsing.</param>
         /// <param name="tokens">
         /// A sequence of token kind and token pairs produced by a tokens.</param>
         /// <returns>The result of parsing.</returns>
         /// <remarks>
-        /// The last token kind and token pair yielded by the <see cref="tokens"/>
-        /// must represent the end-of-input otherwise the behavior of this
-        /// function, and by extension parsing, is undefined.
+        /// The last token kind and token pair yielded by the <see cref="tokens"/> must represent
+        /// the end-of-input otherwise the behavior of this function, and by extension parsing, is
+        /// undefined.
         /// </remarks>
+
         public static TResult
             Parse<TState, TKind, TToken, TPrecedence, TResult>(
                 TState state,
@@ -227,12 +211,13 @@ namespace Gratt
                 IEnumerable<(TKind, TToken)> tokens)
         {
             using var e = tokens.GetEnumerator();
+            using var ts = TokenStream.Create(e);
             var parser =
                 new Parser<TState, TKind, TToken, TPrecedence, TResult>(state,
                                                                         precedenceComparer,
                                                                         kindEqualityComparer,
                                                                         prefixSelector, infixSelector,
-                                                                        e);
+                                                                        ts);
             var result = parser.Parse(initialPrecedence);
             parser.Read(eoi, (TKind _, (TKind, TToken Token) a) => eoiErrorSelector(a.Token));
             return result;
@@ -254,16 +239,14 @@ namespace Gratt
         readonly IEqualityComparer<TKind> _tokenEqualityComparer;
         readonly Func<TKind, TToken, TState, Func<TToken, Parser<TState, TKind, TToken, TPrecedence, TResult>, TResult>> _prefixSelector;
         readonly Func<TKind, TToken, TState, (TPrecedence, Func<TToken, TResult, Parser<TState, TKind, TToken, TPrecedence, TResult>, TResult>)?> _infixSelector;
-        readonly (bool, TKind, TToken)?[] _nexts = new (bool, TKind, TToken)?[Parser.LOOKAHEAD_TOKEN_COUNT];
-
-        IEnumerator<(TKind, TToken)> _lexer;
+        ITokenStream<(TKind, TToken)> _lexer;
 
         internal Parser(TState state,
                         IComparer<TPrecedence> precedenceComparer,
                         IEqualityComparer<TKind> tokenEqualityComparer,
                         Func<TKind, TToken, TState, Func<TToken, Parser<TState, TKind, TToken, TPrecedence, TResult>, TResult>> prefixSelector,
                         Func<TKind, TToken, TState, (TPrecedence, Func<TToken, TResult, Parser<TState, TKind, TToken, TPrecedence, TResult>, TResult>)?> infixSelector,
-                        IEnumerator<(TKind, TToken)> lexer)
+                        ITokenStream<(TKind, TToken)> lexer)
         {
             State = state;
             _precedenceComparer = precedenceComparer;
@@ -312,8 +295,8 @@ namespace Gratt
         /// </summary>
         /// <param name="kind">The kind of token to match and read.</param>
         /// <returns>
-        /// A Boolean value that is <c>true</c> if the next token was matched
-        /// and read; otherwise <c>false</c>.</returns>
+        /// A Boolean value that is <c>true</c> if the next token was matched and read; otherwise
+        /// <c>false</c>.</returns>
 
         public bool Match(TKind kind)
         {
@@ -325,14 +308,13 @@ namespace Gratt
         }
 
         /// <summary>
-        /// Reads the next token and ensures it matches an expected kind
-        /// otherwise it throws a user-defined exception.
+        /// Reads the next token and ensures it matches an expected kind otherwise it throws a
+        /// user-defined exception.
         /// </summary>
         /// <param name="kind">The kind of token expected.</param>
         /// <param name="errorSelector">
-        /// A function that receives the expected token kind, the
-        /// actual token kind and token pair read and returns the
-        /// <see cref="Exception"/> to be thrown.</param>
+        /// A function that receives the expected token kind, the actual token kind and token pair
+        /// read and returns the <see cref="Exception"/> to be thrown.</param>
         /// <returns>The token that was read.</returns>
 
         public TToken Read(TKind kind, Func<TKind, (TKind, TToken), Exception> errorSelector)
@@ -350,22 +332,53 @@ namespace Gratt
         /// </summary>
         /// <returns>The token kind and token pair that was peeked.</returns>
 
-        public (TKind, TToken) Peek()
-            => Lookahead();
+        public (TKind, TToken) Peek() => Peek(0);
 
         /// <summary>
-        /// Peeks at the nth next token kind and token pair without consuming it.
+        /// Peeks at the token kind and token pair at a specified offset (starting with zero meaning
+        /// immediately next) without consuming it.
         /// </summary>
-        /// <param name="number">The 0-based index for the nth token and kind pair to peek.</param>
-        /// <returns>The nth token kind and token pair that was peeked.</returns>
+        /// <returns>The token kind and token pair that was peeked.</returns>
 
-        public (TKind, TToken) Lookahead(int number = 0)
+        public (TKind, TToken) Peek(int offset)
         {
-            return _nexts[number] switch
+            switch (offset)
             {
-                (true, TKind kind, TToken token) => (kind, token),
-                _ => PeekNth(number),
-            };
+                case < 0:
+                    throw new ArgumentOutOfRangeException(nameof(offset), offset, null);
+                case 0:
+                {
+                    var (kind, token) = Read();
+                    Unread(kind, token);
+                    return (kind, token);
+                }
+                case 1:
+                {
+                    var (kind1, token1) = Read();
+                    var (kind2, token2) = Read();
+                    Unread(kind2, token2);
+                    Unread(kind1, token1);
+                    return (kind2, token2);
+                }
+                default:
+                {
+                    var stack = new Stack<(TKind, TToken)>(offset + 1);
+                    while (true)
+                    {
+                        var read = Read();
+                        stack.Push(read);
+                        if (offset-- == 0)
+                        {
+                            while (stack.Count > 0)
+                            {
+                                var (kind, token) = stack.Pop();
+                                Unread(kind, token);
+                            }
+                            return read;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -373,80 +386,219 @@ namespace Gratt
         /// </summary>
         /// <returns>The token kind and token pair that was read.</returns>
         /// <exception cref="InvalidOperationException">
-        /// There are no more tokens to read and usually indicates an
-        /// implementation fault in parsing.
+        /// There are no more tokens to read and usually indicates an implementation fault in
+        /// parsing.
         /// </exception>
 
-        public (TKind, TToken) Read()
+        public (TKind, TToken) Read() =>
+            _lexer.TryRead(out var result) ? result : throw new InvalidOperationException();
+
+        /// <summary>
+        /// Puts back a token kind and token pair to be returned by <see cref="Read()"/>.
+        /// </summary>
+        /// <param name="kind">The kind of token.</param>
+        /// <param name="token">The token.</param>
+
+        public void Unread(TKind kind, TToken token) =>
+            _lexer = _lexer.Unread((kind, token));
+    }
+
+    interface ITokenStream<T> : IDisposable
+    {
+        bool TryRead([MaybeNullWhen(false)] out T result);
+        ITokenStream<T> Unread(T item);
+    }
+
+    static class TokenStream
+    {
+        public static ITokenStream<T> Create<T>(IEnumerator<T> enumerator) =>
+            new Impl<T, (bool, T)>(enumerator, OneTokenStackOps<T>.Instance);
+
+        static ITokenStream<T> Create<T, TBuffer>(IEnumerator<T> enumerator,
+                                                  StoreStackOps<ITokenStream<T>, TBuffer, T> stackOps) =>
+            new Impl<T, TBuffer>(enumerator, stackOps);
+
+        sealed class Impl<T, TBuffer> : ITokenStream<T>
         {
-            switch (_nexts[0])
+            TBuffer _buffer;
+            readonly StoreStackOps<ITokenStream<T>, TBuffer, T> _stackOps;
+            IEnumerator<T>? _enumerator;
+
+            public Impl(IEnumerator<T> enumerator, StoreStackOps<ITokenStream<T>, TBuffer, T> stackOps)
             {
-                case (true, var kind, var token):
-                    Consume(_nexts);
-                    return (kind, token);
-                default:
-                    switch (_lexer)
-                    {
-                        case null:
-                            throw new InvalidOperationException();
-                        case var e:
-                            if (!e.MoveNext())
-                            {
-                                _lexer.Dispose();
-                                _lexer = null;
-                                throw new InvalidOperationException();
-                            }
-                            var (kind, token) = e.Current;
-                            return (kind, token);
-                    }
-            }
-        }
-
-        static void Consume((bool, TKind, TToken)?[] nexts)
-        {
-            // consume the first item from the array of lookhead tokens
-            // by shifting items in the lookahead array leftward
-
-            var index = 0;
-
-            for (; index + 1 < nexts.Length; index++)
-                nexts[index] = nexts[index + 1];
-
-            nexts[index] = default;
-        }
-
-        (TKind, TToken) PeekNth(int number)
-        {
-            System.Diagnostics.Debug.Assert(number < Parser.LOOKAHEAD_TOKEN_COUNT);
-
-            (TKind, TToken)[] lookaheads = new (TKind, TToken)[number + 1];
-
-            var index = 0;
-
-            for (; index < number + 1; index++)
-                lookaheads[index] = Read();
-
-            var (kind, token) = lookaheads[index - 1];
-
-            foreach (var lookahead in lookaheads)
-            {
-                var (k, t) = lookahead;
-                Unread(k, t);
+                _enumerator = enumerator;
+                _stackOps = stackOps;
+                _buffer = _stackOps.Default;
             }
 
-            return (kind, token);
-        }
+            public void Dispose() => _enumerator?.Dispose();
 
-        void Unread(TKind kind, TToken token)
-        {
-            for (var index = 0; index < _nexts.Length; index++)
+            public bool TryRead([MaybeNullWhen(false)] out T result)
             {
-                if (_nexts[index] == null)
+                if (_enumerator is not { } enumerator)
                 {
-                    _nexts[index] = (true, kind, token);
-                    break;
+                    result = default;
+                    return false;
+                }
+
+                if (_stackOps.TryPop(ref _buffer, out result))
+                    return true;
+
+                if (!enumerator.MoveNext())
+                {
+                    _enumerator.Dispose();
+                    _enumerator = null;
+                    result = default;
+                    return false;
+                }
+
+                result = enumerator.Current;
+                return true;
+            }
+
+            public ITokenStream<T> Unread(T item)
+                => _enumerator is null ? throw new InvalidOperationException()
+                 : _stackOps.TryPush(ref _buffer, item) ? this
+                 : _stackOps.Grow(_buffer, _enumerator).Unread(item);
+        }
+
+        abstract class StoreStackOps<TContainer, TStore, T>
+        {
+            public abstract TStore Default { get; }
+            public abstract bool TryPush(ref TStore store, T item);
+            public abstract bool TryPop(ref TStore store, [MaybeNullWhen(false)] out T item);
+            public abstract TContainer Grow(TStore store, IEnumerator<T> enumerator);
+        }
+
+        sealed class OneTokenStackOps<T> : StoreStackOps<ITokenStream<T>, (bool, T), T>
+        {
+            public static readonly OneTokenStackOps<T> Instance = new();
+
+            OneTokenStackOps() { }
+
+            public override (bool, T) Default => default;
+
+            public override bool TryPush(ref (bool, T) store, T item)
+            {
+                if (store is (true, _))
+                    return false;
+
+                store = (true, item);
+                return true;
+            }
+
+            public override bool TryPop(ref (bool, T) store, [MaybeNullWhen(false)] out T item)
+            {
+                switch (store)
+                {
+                    case (false, _):
+                        item = default;
+                        return false;
+                    case (true, var some):
+                        item = some;
+                        store = Default;
+                        return true;
                 }
             }
+
+            public override ITokenStream<T> Grow((bool, T) store, IEnumerator<T> enumerator)
+            {
+                var stream = Create(enumerator, TwoTokenStackOps<T>.Instance);
+                var (_, token) = store;
+                return stream.Unread(token);
+            }
+        }
+
+        sealed class TwoTokenStackOps<T> : StoreStackOps<ITokenStream<T>, TwoTokenStackOps<T>.Store, T>
+        {
+            public enum CountOf2 { Zero, One, Two }
+
+            public record struct Store(CountOf2 Count, T First, T Second);
+
+            public static readonly TwoTokenStackOps<T> Instance = new();
+
+            TwoTokenStackOps() { }
+
+            public override Store Default => default;
+
+            public override bool TryPush(ref Store store, T item)
+            {
+                switch (store)
+                {
+                    case (CountOf2.Zero, _, _):
+                        store.Count = CountOf2.One;
+                        store.First = item;
+                        return true;
+                    case (CountOf2.One, var first, _):
+                        store = new(CountOf2.Two, item, first);
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            T Pop(ref Store store) =>
+                TryPop(ref store, out var popped) ? popped : throw new InvalidOperationException();
+
+            public override bool TryPop(ref Store store, [MaybeNullWhen(false)] out T item)
+            {
+                switch (store)
+                {
+                    case (CountOf2.One, var first, _):
+                        item = first;
+                        store = Default;
+                        return true;
+                    case (CountOf2.Two, var first, var second):
+                        item = first;
+                        store = Default;
+                        store.Count = CountOf2.One;
+                        store.First = second;
+                        return true;
+                    default:
+                        item = default;
+                        return false;
+                }
+            }
+
+            public override ITokenStream<T> Grow(Store store, IEnumerator<T> enumerator)
+            {
+                var stream = Create(enumerator, MultiTokenStackOps<T>.Instance);
+                var (first, second) = (Pop(ref store), Pop(ref store));
+                stream.Unread(second);
+                stream.Unread(first);
+                return stream;
+            }
+        }
+
+        sealed class MultiTokenStackOps<T> : StoreStackOps<ITokenStream<T>, Stack<T>?, T>
+        {
+            public static readonly MultiTokenStackOps<T> Instance = new();
+
+            MultiTokenStackOps() { }
+
+            public override Stack<T>? Default => default;
+
+            public override bool TryPush(ref Stack<T>? store, T item)
+            {
+                store ??= new Stack<T>();
+                store.Push(item);
+                return true;
+            }
+
+            public override bool TryPop(ref Stack<T>? store, [MaybeNullWhen(false)] out T item)
+            {
+                if (store is not { Count: > 0 } stack)
+                {
+                    item = default;
+                    return false;
+                }
+
+                item = stack.Pop();
+                return true;
+            }
+
+            public override ITokenStream<T> Grow(Stack<T>? store, IEnumerator<T> enumerator) =>
+                throw new NotImplementedException(); // Should never get here!
         }
     }
 }

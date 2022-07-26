@@ -127,23 +127,21 @@ arguments			: T_LPAREN T_RPAREN
 					| T_LPAREN function_arguments T_RPAREN
 					;
 		
-function_arguments	: expression
+function_arguments	: function_arg
 					{
 						PushFunction();
 						AddFunctionArg();
 					}
+					| function_arguments T_COMMA function_arg 
+					{
+						AddFunctionArg();
+					}
+					;
+
+function_arg        : expression
 					| expression_type
 					{
-						PushFunction();
-						AddFunctionArg();
-					}
-					| function_arguments T_COMMA expression 
-					{
-						AddFunctionArg();
-					}
-					| function_arguments T_COMMA expression_type 
-					{
-						AddFunctionArg();
+						OnExpressionType();
 					}
 					;
 
@@ -153,9 +151,6 @@ current_node		: T_CURRENT
 					}
 					;
 expression_type		: T_ETYPE expression
-					{
-						OnExpressionType();
-					}
 					;
 										
 bracket_specifier	: T_LBRACKET T_NUMBER T_RBRACKET

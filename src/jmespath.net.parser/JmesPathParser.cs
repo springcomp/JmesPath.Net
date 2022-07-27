@@ -222,6 +222,10 @@ namespace DevLab.JmesPath
 
         void OnCurrentNode() => generator_.OnCurrentNode();
 
+        void OnReduceExpressionSeed() => generator_.OnReduceExpressionSeed();
+        void OnReduceExpression() => generator_.OnReduceExpression();
+        void OnRootNode() => generator_.OnRootNode();
+
         #endregion // Expressions
     }
 }

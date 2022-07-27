@@ -48,5 +48,9 @@
         void OnExpressionType();
 
         void OnPipeExpression();
+
+        void OnReduceExpressionSeed();
+        void OnReduceExpression();
+        void OnRootNode();
     }
 }

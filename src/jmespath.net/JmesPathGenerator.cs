@@ -29,6 +29,9 @@ namespace DevLab.JmesPath
             = new Stack<JmesPathExpression>()
             ;
 
+        // seed for the reduce-expression
+        JmesPathExpression seed_ = null;
+
         JmesPathExpression expression_;
 
         public JmesPathGenerator(IFunctionRepository repository)
@@ -333,6 +336,32 @@ namespace DevLab.JmesPath
             var left = expressions_.Pop();
 
             expressions_.Push(factory(left, right));
+        }
+
+        public void OnReduceExpressionSeed()
+        {
+            Prolog();
+
+            seed_ = expressions_.Pop();
+        }
+
+        public void OnReduceExpression()
+        {
+            Prolog();
+
+            var reduce = expressions_.Pop();
+            var expression = new JmesPathReduceExpression(seed_, reduce);
+
+            seed_ = null;
+
+            expressions_.Push(expression);
+        }
+
+        public void OnRootNode()
+        {
+            Prolog();
+
+            expressions_.Push(new JmesPathRootNodeExpression());
         }
     }
 }

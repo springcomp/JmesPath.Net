@@ -24,9 +24,14 @@ T_NE			!=
 
 T_FLATTEN		\[\]
 T_FILTER		\[\?
-T_STAR			\*
+T_REDUCE        \[\%
+
 T_CURRENT		@
+T_DOLLAR        \$
 T_ETYPE			&
+T_STAR			\*
+
+T_ARROW         \->
 
 T_NUMBER		\-?[0-9]+
 
@@ -77,9 +82,12 @@ E_UNRECOGNIZED	.
 
 {T_FILTER}			{ return MakeToken(TokenType.T_FILTER); }
 {T_FLATTEN}			{ return MakeToken(TokenType.T_FLATTEN); }
-{T_STAR}			{ return MakeToken(TokenType.T_STAR); }
+{T_REDUCE}			{ return MakeToken(TokenType.T_REDUCE); }
+
 {T_CURRENT}			{ return MakeToken(TokenType.T_CURRENT); }
+{T_DOLLAR}			{ return MakeToken(TokenType.T_DOLLAR); }
 {T_ETYPE}			{ return MakeToken(TokenType.T_ETYPE); }
+{T_STAR}			{ return MakeToken(TokenType.T_STAR); }
 
 {T_NUMBER}			{ return MakeToken(TokenType.T_NUMBER); }
 {T_LSTRING}			{ return MakeToken(TokenType.T_LSTRING); }
@@ -93,6 +101,8 @@ E_UNRECOGNIZED	.
 {T_RBRACKET}		{ return MakeToken(TokenType.T_RBRACKET); }
 {T_LPAREN}			{ return MakeToken(TokenType.T_LPAREN); }
 {T_RPAREN}			{ return MakeToken(TokenType.T_RPAREN); }
+
+{T_ARROW}			{ return MakeToken(TokenType.T_ARROW); }
 
 {T_WHITESPACE}   	{ }
 {E_UNRECOGNIZED}	{ yyerror(yytext); }

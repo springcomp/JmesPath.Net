@@ -223,5 +223,12 @@ namespace DevLab.JmesPath
         void OnCurrentNode() => generator_.OnCurrentNode();
 
         #endregion // Expressions
+
+        #region lambda_expression
+
+        void PushLambdaArg(Token token) => generator_.PushLambdaArg((string)token.Value);
+        void OnLambdaExpression() => generator_.OnLambdaExpression();
+
+        #endregion
     }
 }

@@ -29,6 +29,10 @@ namespace DevLab.JmesPath
             = new Stack<JmesPathExpression>()
             ;
 
+        readonly IList<string> lambda_args_
+            = new List<string>()
+            ;
+
         JmesPathExpression expression_;
 
         public JmesPathGenerator(IFunctionRepository repository)
@@ -333,6 +337,24 @@ namespace DevLab.JmesPath
             var left = expressions_.Pop();
 
             expressions_.Push(factory(left, right));
+        }
+
+        public void PushLambdaArg(string name)
+        {
+            lambda_args_.Add(name);
+        }
+
+        public void OnLambdaExpression()
+        {
+            Prolog();
+
+            var expression = expressions_.Pop();
+            var lambda = new JmesPathLambdaExpression(expression, lambda_args_);
+            JmesPathExpression.MakeExpressionType(lambda);
+
+            lambda_args_.Clear();
+
+            expressions_.Push(lambda);
         }
     }
 }

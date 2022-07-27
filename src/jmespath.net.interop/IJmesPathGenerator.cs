@@ -48,5 +48,8 @@
         void OnExpressionType();
 
         void OnPipeExpression();
+
+        void PushLambdaArg(string name);
+        void OnLambdaExpression();
     }
 }

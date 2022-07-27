@@ -28,9 +28,12 @@
 
 	T_FILTER,
 	T_FLATTEN,
-	T_STAR,
+	T_REDUCE
+
 	T_CURRENT,
+	T_DOLLAR,
 	T_ETYPE,
+	T_STAR,
 
 	T_NUMBER,
 	T_LSTRING,
@@ -44,7 +47,7 @@
 	T_RBRACKET,
 	T_LPAREN,
 	T_RPAREN
-
+	
 %left T_PIPE
 %left T_OR
 %left T_AND
@@ -61,6 +64,7 @@
 %left T_STAR
 %left T_FILTER
 %left T_FLATTEN
+%left T_REDUCE
 %left T_LISTWILDCARD
 %left T_RBRACKET
 
@@ -90,6 +94,8 @@ expression_impl		: sub_expression
 					| function_expression
 					| raw_string
 					| current_node
+					| reduce_expression
+					| root_node
 					;
 
 sub_expression		: sub_expression_impl
@@ -336,6 +342,22 @@ slice_expression	: T_COLON
 					|          T_COLON          T_COLON
 					{
 						OnSliceExpression(null, null, null);
+					}
+					;
+
+reduce_expression   : reduce_expr_impl
+					{
+						OnReduceExpression();
+					}
+					;
+
+reduce_expr_impl    : T_REDUCE T_RBRACKET
+					| T_REDUCE expression T_RBRACKET
+					;
+
+root_node           : T_DOLLAR
+					{
+						OnRootNode();
 					}
 					;
 

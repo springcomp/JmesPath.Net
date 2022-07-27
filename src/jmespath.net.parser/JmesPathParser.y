@@ -43,7 +43,9 @@
 	T_LBRACKET,
 	T_RBRACKET,
 	T_LPAREN,
-	T_RPAREN
+	T_RPAREN,
+
+	T_ARROW
 
 %left T_PIPE
 %left T_OR
@@ -139,6 +141,7 @@ function_arguments	: function_arg
 					;
 
 function_arg        : expression
+					| lambda_expression
 					| expression_type
 					{
 						OnExpressionType();
@@ -152,7 +155,42 @@ current_node		: T_CURRENT
 					;
 expression_type		: T_ETYPE expression
 					;
-										
+// lambda_expression is producing a shift/reduce conflict:
+//
+// Shift/Reduce conflict
+// Shift "T_RPAREN":      State-116 -> State-117
+// Reduce 57:     identifier_impl -> unquoted_string/
+//
+// The parser will shift by default – which is what we want.
+
+lambda_expression   : unquoted_string T_ARROW expression
+					{
+						PushLambdaArg($1.Token);
+						OnLambdaExpression();
+					}
+					| T_LPAREN T_RPAREN T_ARROW expression
+					| T_LPAREN unquoted_string T_RPAREN T_ARROW expression
+					{
+						PushLambdaArg($2.Token);
+						OnLambdaExpression();
+					}
+					| T_LPAREN lambda_inner_args T_COMMA unquoted_string T_RPAREN T_ARROW expression
+					{
+						PushLambdaArg($4.Token);
+						OnLambdaExpression();
+					}
+					;
+
+lambda_inner_args   : unquoted_string
+					{
+						PushLambdaArg($1.Token);
+					}
+					| lambda_inner_args T_COMMA unquoted_string
+					{
+						PushLambdaArg($3.Token);
+					}
+					;
+
 bracket_specifier	: T_LBRACKET T_NUMBER T_RBRACKET
 					{
 						System.Diagnostics.Debug.WriteLine("bracket_specifier (index): {0}.", $2.Token);

@@ -42,6 +42,8 @@ T_RBRACKET		\]
 T_LPAREN		\(
 T_RPAREN		\)
 
+T_ARROW         =>
+
 T_WHITESPACE	[ \b\f\n\r\t]+
 E_UNRECOGNIZED	.
 
@@ -93,6 +95,8 @@ E_UNRECOGNIZED	.
 {T_RBRACKET}		{ return MakeToken(TokenType.T_RBRACKET); }
 {T_LPAREN}			{ return MakeToken(TokenType.T_LPAREN); }
 {T_RPAREN}			{ return MakeToken(TokenType.T_RPAREN); }
+
+{T_ARROW}			{ return MakeToken(TokenType.T_ARROW); }
 
 {T_WHITESPACE}   	{ }
 {E_UNRECOGNIZED}	{ yyerror(yytext); }

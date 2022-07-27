@@ -334,5 +334,26 @@ namespace DevLab.JmesPath
 
             expressions_.Push(factory(left, right));
         }
+
+        public void OnReduceExpression()
+        {
+            Prolog();
+
+            var seed = expressions_.Count > 0
+                ? expressions_.Pop()
+                : null
+                ;
+
+            var expression = new JmesPathReduceExpression(seed);
+
+            expressions_.Push(expression);
+        }
+
+        public void OnRootNode()
+        {
+            Prolog();
+
+            expressions_.Push(new JmesPathRootNodeExpression());
+        }
     }
 }

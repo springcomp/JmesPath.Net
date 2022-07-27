@@ -10,6 +10,8 @@ namespace DevLab.JmesPath.Expressions
     /// </summary>
     public abstract class JmesPathExpression
     {
+        protected IReduceAccumulator accumulator_ = null;
+
         /// <summary>
         /// Evaluates the expression against the specified JSON object.
         /// The result cannot be null and is:
@@ -51,6 +53,9 @@ namespace DevLab.JmesPath.Expressions
         {
             expression.IsExpressionType = true;
         }
+
+        internal void SetAccumulator(IReduceAccumulator accumulator)
+            => accumulator_ = accumulator;
 
         /// <summary>
         /// Perform a traversal of the abstract syntax tree.

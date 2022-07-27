@@ -15,6 +15,7 @@ namespace DevLab.JmesPath
         private readonly Encoding _encoding;
         private readonly JmesPathFunctionFactory repository_;
         private readonly ScopeParticipantVisitor evaluator_ = new ScopeParticipantVisitor();
+        private readonly ReduceAccumulator accumulator_ = new ReduceAccumulator();
 
         public JmesPath() : this(Encoding.UTF8)
         {
@@ -88,6 +89,11 @@ namespace DevLab.JmesPath
             var evaluator = new ContextEvaluatorVisitor(evaluator_); 
             analyzer.Expression.Accept(evaluator);
 
+            // inject reduce accumumator to all expressions
+
+            var accumulator = new ReduceAccumulatorVisitor(accumulator_);
+            analyzer.Expression.Accept(accumulator);
+
             return new Expression(analyzer.Expression);
         }
 
@@ -119,6 +125,24 @@ namespace DevLab.JmesPath
                 var projection = expression as JmesPathSliceProjection;
                 if (projection?.Step != null && projection.Step.Value == 0)
                     throw new Exception("Error: invalid-value, a slice projection step cannot be 0.");
+            }
+        }
+
+        private sealed class ReduceAccumulatorVisitor : IVisitor
+        {
+            private readonly IReduceAccumulator accumulator_;
+
+            public ReduceAccumulatorVisitor(IReduceAccumulator accumulator)
+            {
+                accumulator_ = accumulator;
+            }
+
+            public void Visit(JmesPathExpression expression)
+            {
+                if (expression is JmesPathReduceExpression reduce)
+                    reduce.SetAccumulator(accumulator_);
+                if (expression is JmesPathRootNodeExpression root)
+                    root.SetAccumulator(accumulator_);
             }
         }
 

@@ -24,6 +24,7 @@ namespace jmespathnet.tests.Functions
         [InlineData("reduce(@, `false`, (acc, cur) => acc || cur)", "[false, false, false]", "false")] // any
         [InlineData("reduce(@, `true`, (acc, cur) => acc && cur)", "[true, false, false]", "false")] // all
         [InlineData("reduce(@, `true`, (acc, cur) => acc && cur)", "[true, true, true]", "true")] // all
+        [InlineData("reduce([?contains(@, `2`)], `0`, (acc, cur) => max([acc, length(cur)]))", "[[1, 2, 3], [2, 3], [1, 4]]", "3")]
         public void JmesPathReduceFunctionTests(string expression, string json, string expected)
             => Assert(expression, json, expected);
     }

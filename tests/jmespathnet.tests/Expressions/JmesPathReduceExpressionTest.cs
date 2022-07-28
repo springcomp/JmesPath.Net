@@ -13,6 +13,7 @@ namespace jmespath.net.tests.Expressions
         [InlineData("[% `false`] -> $ || @", "[false, false, false]", "false")] // any
         [InlineData("[% `true` ] -> $ && @", "[true, false, false]", "false")] // all
         [InlineData("[% `true` ] -> $ && @", "[true, true, true]", "true")] // all
+        [InlineData("[?contains(@, `2`)]|[% `0` ] -> max([$, length(@)])", "[[1, 2, 3], [2, 3], [1, 3]]", "3")] 
         public void JmesPathReduceExpression(string expression, string json, string expected)
             => Assert(expression, json, expected);
     }

@@ -6,6 +6,8 @@
 
 %option stack, minimize, parser, verbose, persistbuffer, embedbuffers 
 
+T_PLUS          \+
+
 T_AND			&&
 T_OR			\|\|
 T_NOT			!
@@ -61,6 +63,8 @@ E_UNRECOGNIZED	.
 		return obj.token;
 	}
 
+
+{T_PLUS}			{ return MakeToken(TokenType.T_PLUS); }
 
 {T_AND}				{ return MakeToken(TokenType.T_AND); }
 {T_OR}				{ return MakeToken(TokenType.T_OR); }

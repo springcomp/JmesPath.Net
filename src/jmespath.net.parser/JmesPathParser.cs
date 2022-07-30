@@ -225,6 +225,8 @@ namespace DevLab.JmesPath
         void OnReduceExpression() => generator_.OnReduceExpression();
         void OnRootNode() => generator_.OnRootNode();
 
+        void OnArithmeticAddition() => generator_.OnArithmeticAddition();
+
         #endregion // Expressions
     }
 }

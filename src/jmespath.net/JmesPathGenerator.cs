@@ -355,5 +355,8 @@ namespace DevLab.JmesPath
 
             expressions_.Push(new JmesPathRootNodeExpression());
         }
+
+        public void OnArithmeticAddition()
+            => PopPush((left, right) => new JmesPathAdditionExpression(left, right));
     }
 }

@@ -10,6 +10,8 @@
 
 %token
 
+	T_PLUS,
+
 	T_AND,
 	T_OR,
 	T_NOT,
@@ -60,6 +62,9 @@
 %left T_NE
 %left T_NOT
 %left T_DOT
+
+%left T_PLUS
+
 %left T_LBRACKET
 %left T_STAR
 %left T_FILTER
@@ -96,6 +101,7 @@ expression_impl		: sub_expression
 					| current_node
 					| reduce_expression
 					| root_node
+					| arithmetic_expression
 					;
 
 sub_expression		: sub_expression_impl
@@ -109,6 +115,13 @@ sub_expression_impl	: expression T_DOT identifier
 					| expression T_DOT multi_select_list
 					| expression T_DOT function_expression
 					| expression T_DOT hash_wildcard
+					| expression T_DOT paren_expression
+					;
+
+arithmetic_expression : expression T_PLUS expression
+					{
+						OnArithmeticAddition();
+					}
 					;
 
 

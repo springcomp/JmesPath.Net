@@ -1,9 +1,9 @@
 using DevLab.JmesPath.Expressions;
+using Xunit;
 
 namespace jmespath.net.tests.Expressions
 {
     using FactAttribute = Xunit.FactAttribute;
-
     public class JmesPathIdentifierTest : JmesPathExpressionsTestBase
     {
         /*

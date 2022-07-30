@@ -50,5 +50,6 @@
         void OnPipeExpression();
         void OnReduceExpression();
         void OnRootNode();
+        void OnArithmeticAddition();
     }
 }

@@ -10,6 +10,8 @@ namespace DevLab.JmesPath.Expressions
     /// </summary>
     public abstract class JmesPathExpression
     {
+        protected IReduceAccumulator accumulator_ = null;
+
         /// <summary>
         /// Evaluates the expression against the specified JSON object.
         /// The result cannot be null and is:
@@ -22,17 +24,42 @@ namespace DevLab.JmesPath.Expressions
         {
             if (argument.IsProjection)
             {
-                var items = new List<JmesPathArgument>();
-                foreach (var projected in argument.Projection)
+                if (argument.Accumulator == JTokens.Null)
                 {
-                    var item = Transform(projected);
-                    if (item.IsProjection)
-                        items.Add(item);
-                    else if (item.Token != JTokens.Null)
-                        items.Add(item);
+                    var items = new List<JmesPathArgument>();
+                    foreach (var projected in argument.Projection)
+                    {
+                        var item = Transform(projected);
+                        if (item.IsProjection)
+                            items.Add(item);
+                        else if (item.Token != JTokens.Null)
+                            items.Add(item);
+                    }
+
+                    return new JmesPathArgument(items);
                 }
 
-                return new JmesPathArgument(items);
+                // handle reduction
+
+                else
+                {
+                    var acc = argument.Accumulator;
+
+                    foreach (var projected in argument.Projection)
+                    {
+                        try
+                        {
+                            accumulator_?.PushSeed(acc);
+                            acc = Transform(projected).AsJToken();
+                        }
+                        finally
+                        {
+                            accumulator_?.PopSeed();
+                        }
+                    }
+
+                    return acc;
+                }
             }
 
             return Transform(argument.Token);
@@ -51,6 +78,9 @@ namespace DevLab.JmesPath.Expressions
         {
             expression.IsExpressionType = true;
         }
+
+        internal void SetAccumulator(IReduceAccumulator accumulator)
+             => accumulator_ = accumulator;
 
         /// <summary>
         /// Perform a traversal of the abstract syntax tree.

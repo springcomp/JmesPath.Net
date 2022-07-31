@@ -48,7 +48,8 @@
         void OnExpressionType();
 
         void OnPipeExpression();
-        void OnReduceExpression();
+        void OnReduceProjection();
+        void OnParenExpression();
         void OnRootNode();
         void OnArithmeticAddition();
     }

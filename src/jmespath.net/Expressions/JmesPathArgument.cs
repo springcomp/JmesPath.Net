@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using DevLab.JmesPath.Utils;
+using DevLab.JmesPath.Interop;
 
 namespace DevLab.JmesPath.Expressions
 {
@@ -18,6 +19,7 @@ namespace DevLab.JmesPath.Expressions
         {
             Token = token ?? JTokens.Null;
             Projection = null;
+            Accumulator = JTokens.Null;
         }
 
         public JmesPathArgument(IEnumerable<JmesPathArgument> projection)
@@ -25,6 +27,7 @@ namespace DevLab.JmesPath.Expressions
             Token = null;
             Debug.Assert(projection != null);
             Projection = projection.ToArray();
+            Accumulator = JTokens.Null;
         }
 
         public bool IsProjection
@@ -39,6 +42,7 @@ namespace DevLab.JmesPath.Expressions
         public JToken Token { get; }
 
         public JmesPathArgument[] Projection { get; }
+        public JToken Accumulator { get; set; }
 
         public JToken AsJToken()
         {

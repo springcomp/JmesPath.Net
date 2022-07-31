@@ -6,10 +6,10 @@ namespace jmespath.net.tests.Expressions
     public class JmesPathReduceExpressionTest : ParserTestBase
     {
         [Theory]
-        [InlineData("[% `false`].@ || @", "[true, false, false]", "true")] // any
-        [InlineData("[% `false`].$ || @", "[false, false, false]", "false")] // any
-        [InlineData("[% `true` ].$ && @", "[true, false, false]", "false")] // all
-        [InlineData("[% `true` ].$ && @", "[true, true, true]", "true")] // all
+        [InlineData("[% `false`].( $ || @ )", "[true, false, false]", "true")] // any
+        [InlineData("[% `false`].( $ || @ )", "[false, false, false]", "false")] // any
+        [InlineData("[% `true` ].( $ && @ )", "[true, false, false]", "false")] // all
+        [InlineData("[% `true` ].( $ && @ )", "[true, true, true]", "true")] // all
         public void JmesPathReduceExpression(string expression, string json, string expected)
             => Assert(expression, json, expected);
     }

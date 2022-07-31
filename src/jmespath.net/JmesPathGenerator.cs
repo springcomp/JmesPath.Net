@@ -335,7 +335,7 @@ namespace DevLab.JmesPath
             expressions_.Push(factory(left, right));
         }
 
-        public void OnReduceExpression()
+        public void OnReduceProjection()
         {
             Prolog();
 
@@ -354,6 +354,16 @@ namespace DevLab.JmesPath
             Prolog();
 
             expressions_.Push(new JmesPathRootNodeExpression());
+        }
+
+        public void OnParenExpression()
+        {
+            Prolog();
+
+            var inner = expressions_.Pop();
+            var expression = new JmesParenExpression(inner);
+
+            expressions_.Push(expression);
         }
 
         public void OnArithmeticAddition()

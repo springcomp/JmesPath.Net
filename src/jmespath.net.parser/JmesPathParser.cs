@@ -222,7 +222,8 @@ namespace DevLab.JmesPath
 
         void OnCurrentNode() => generator_.OnCurrentNode();
 
-        void OnReduceExpression() => generator_.OnReduceExpression();
+        void OnReduceProjection() => generator_.OnReduceProjection();
+        void OnParenExpression() => generator_.OnParenExpression();
         void OnRootNode() => generator_.OnRootNode();
 
         void OnArithmeticAddition() => generator_.OnArithmeticAddition();

@@ -22,6 +22,7 @@ namespace DevLab.JmesPath.Expressions
                 subExpression is JmesPathMultiSelectHash ||
                 subExpression is JmesPathMultiSelectList ||
                 subExpression is JmesPathHashWildcardProjection ||
+                subExpression is JmesParenExpression ||
                 false
                 );
         }

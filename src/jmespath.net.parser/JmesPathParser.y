@@ -99,7 +99,7 @@ expression_impl		: sub_expression
 					| function_expression
 					| raw_string
 					| current_node
-					| reduce_expression
+					| reduce_projection
 					| root_node
 					| arithmetic_expression
 					;
@@ -255,7 +255,13 @@ not_expression		: T_NOT expression
 					}
 					;
 
-paren_expression	: T_LPAREN expression T_RPAREN
+paren_expression	: paren_expression_impl
+					{
+						OnParenExpression();
+					}
+					;
+
+paren_expression_impl : T_LPAREN expression T_RPAREN
 					;
 
 hash_wildcard		: T_STAR
@@ -358,13 +364,13 @@ slice_expression	: T_COLON
 					}
 					;
 
-reduce_expression   : reduce_expr_impl
+reduce_projection   : reduce_proj_impl
 					{
-						OnReduceExpression();
+						OnReduceProjection();
 					}
 					;
 
-reduce_expr_impl    : T_REDUCE T_RBRACKET
+reduce_proj_impl    : T_REDUCE T_RBRACKET
 					| T_REDUCE expression T_RBRACKET
 					;
 

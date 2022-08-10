@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "882ace59-8c15-48a5-ad11-a273a4204199",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=jmespath9d9a;AccountKey=WHaMCP4XIAfIR3Lbgt7ZA59Z1EG5oeSJjdQuNwPBEN/dgi1QmViFy2Krg+fU/cBLH+v3/M5Dojys+AStUf3K2g==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME_VERSION": "~7",
+    "FUNCTIONS_WORKER_RUNTIME": "powershell"
+  }
+}

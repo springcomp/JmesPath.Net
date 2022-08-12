@@ -19,7 +19,7 @@ public class Startup : FunctionsStartup
 
 		var jmesPath = new JmesPath();
 		jmesPath.FunctionRepository
-			.Register<ToObjectFunction>()
+			.Register<FromItemsFunction>()
 			.Register<ItemsFunction>()
 			.Register<LetFunction>()
 			.Register<ZipFunction>()

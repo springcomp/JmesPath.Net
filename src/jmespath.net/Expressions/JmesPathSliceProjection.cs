@@ -85,7 +85,12 @@ namespace DevLab.JmesPath.Expressions
                ;
 
             for (var index = start; compare(index, stop); index += step)
-                characters.Add(text[index]);
+            {
+                if (step > 0 && index >= length) break;
+                if (step < 0 && index < 0) break;
+                if (index >= 0 && index < length)
+                    characters.Add(text[index]);
+            }
 
             return new JValue(new string(characters.ToArray()));
         }

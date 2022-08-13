@@ -27,6 +27,7 @@ namespace DevLab.JmesPath.Functions
                 .Register<ContainsFunction>()
                 .Register<EndsWithFunction>()
                 .Register<FloorFunction>()
+                .Register<GroupByFunction>()
                 .Register<JoinFunction>()
                 .Register<LengthFunction>()
                 .Register<KeysFunction>()

@@ -42,6 +42,7 @@ namespace DevLab.JmesPath.Functions
                 .Register<MinFunction>()
                 .Register<MinByFunction>()
                 .Register<NotNullFunction>()
+                .Register<ReplaceFunction>()
                 .Register<ReverseFunction>()
                 .Register<StartsWithFunction>()
                 .Register<SortFunction>()

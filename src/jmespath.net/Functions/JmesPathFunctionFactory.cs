@@ -42,6 +42,8 @@ namespace DevLab.JmesPath.Functions
                 .Register<MinFunction>()
                 .Register<MinByFunction>()
                 .Register<NotNullFunction>()
+                .Register<PadLeftFunction>()
+                .Register<PadRightFunction>()
                 .Register<ReplaceFunction>()
                 .Register<ReverseFunction>()
                 .Register<StartsWithFunction>()

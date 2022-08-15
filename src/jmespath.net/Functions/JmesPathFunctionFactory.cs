@@ -32,6 +32,7 @@ namespace DevLab.JmesPath.Functions
                 .Register<GroupByFunction>()
                 .Register<JoinFunction>()
                 .Register<LengthFunction>()
+                .Register<LowerFunction>()
                 .Register<KeysFunction>()
                 .Register<MapFunction>()
                 .Register<MapByFunction>()
@@ -50,6 +51,7 @@ namespace DevLab.JmesPath.Functions
                 .Register<ToNumberFunction>()
                 .Register<ToStringFunction>()
                 .Register<TypeFunction>()
+                .Register<UpperFunction>()
                 .Register<ValuesFunction>()
                 ;
         }

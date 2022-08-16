@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jpnet", "tools\jpnet\jpnet.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "jmespath.net.interop", "src\jmespath.net.interop\jmespath.net.interop.csproj", "{887093C1-A2AD-45C7-9B79-9F496D02826F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunctionApp", "src\FunctionApp\FunctionApp.csproj", "{B9A9899D-DACB-4E37-8079-C055BD716E6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{887093C1-A2AD-45C7-9B79-9F496D02826F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{887093C1-A2AD-45C7-9B79-9F496D02826F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{887093C1-A2AD-45C7-9B79-9F496D02826F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A9899D-DACB-4E37-8079-C055BD716E6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A9899D-DACB-4E37-8079-C055BD716E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A9899D-DACB-4E37-8079-C055BD716E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A9899D-DACB-4E37-8079-C055BD716E6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{A3301284-F70F-45E2-ABC9-A19D66A10712} = {6D7773F3-76FA-4E25-A85C-7AA1AD5668D8}
 		{4F2BFBEA-D4D6-4064-9D9D-3881D5463152} = {CF8C1543-B634-47F5-BF43-4508F64E0554}
 		{887093C1-A2AD-45C7-9B79-9F496D02826F} = {6D7773F3-76FA-4E25-A85C-7AA1AD5668D8}
+		{B9A9899D-DACB-4E37-8079-C055BD716E6E} = {6D7773F3-76FA-4E25-A85C-7AA1AD5668D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {759AACA1-7B3D-4EA9-AAC6-CA9150656A98}

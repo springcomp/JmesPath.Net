@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using DevLab.JmesPath.Expressions;
 using DevLab.JmesPath.Interop;
 using DevLab.JmesPath.Utils;
 using Newtonsoft.Json.Linq;
@@ -128,10 +129,12 @@ namespace DevLab.JmesPath.Functions
                 throw new Exception($"Error: invalid-type, function {Name} expects either an array or a string.");
         }
 
-        protected void EnsureExpressionType(JmesPathFunctionArgument argument)
+        protected JmesPathExpression EnsureExpressionType(JmesPathFunctionArgument argument)
         {
             if (!argument.IsExpressionType)
                 throw new Exception($"Error: invalid-type, function {Name} expects an expression-type.");
+
+            return argument.Expression;
         }
 
         protected void EnsureNumbers(params JmesPathFunctionArgument[] args)

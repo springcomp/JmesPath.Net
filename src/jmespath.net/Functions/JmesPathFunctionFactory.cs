@@ -45,6 +45,7 @@ namespace DevLab.JmesPath.Functions
                 .Register<PadLeftFunction>()
                 .Register<PadRightFunction>()
                 .Register<ReplaceFunction>()
+                .Register<ReduceFunction>()
                 .Register<ReverseFunction>()
                 .Register<SplitFunction>()
                 .Register<StartsWithFunction>()

@@ -1,0 +1,33 @@
+[
+  {
+    "given": {
+      "all": [ true, true, true ],
+      "any": [ true, false, false ],
+      "array": [[1, 2, 3], [2, 3], [1, 4]],
+      "numbers": [ 1, 2, 3, 4 ],
+      "text": "string"
+    },
+    "cases": [
+      {
+        "comment": "Reduce operates on arrays only.",
+        "expression": "reduce(text, {acc: `false`}, &acc || @)",
+        "error": "invalid-type"
+      },
+      {
+        "comment":  "Is there any truthy value?",
+        "expression": "reduce(any, {acc: `false`}, &acc || @)",
+        "result":  true
+      },
+      {
+        "comment":  "Are all values truthy?",
+        "expression": "reduce(all, {acc: `true`}, &acc && @)",
+        "result":  true
+      },
+      {
+        "comment": "Count arrays containing element `2`",
+        "expression": "reduce(array[?contains(@, `2`)], {acc: `0`}, &max([acc, length(@)]))",
+        "result":  3
+      }
+    ]
+  }
+]

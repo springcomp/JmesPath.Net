@@ -52,6 +52,9 @@
 	T_LPAREN,
 	T_RPAREN
 
+	T_REDUCE
+	T_DOLLAR
+
 %left T_PIPE
 %left T_OR
 %left T_AND
@@ -78,6 +81,7 @@
 %left T_FILTER
 %left T_FLATTEN
 %left T_LISTWILDCARD
+%left T_REDUCE
 %left T_RBRACKET
 
 %start expression
@@ -107,6 +111,8 @@ expression_impl		: sub_expression
 					| raw_string
 					| current_node
 					| arithmetic_expression
+					| reduce_accumulator
+					| reduce_expression
 					;
 
 sub_expression		: sub_expression_impl
@@ -206,12 +212,19 @@ current_node		: T_CURRENT
 						OnCurrentNode();
 					}
 					;
+
+reduce_accumulator	: T_DOLLAR
+					{
+						OnReduceAccumulator();
+					}
+					;
+
 expression_type		: T_ETYPE expression
 					{
 						OnExpressionType();
 					}
 					;
-										
+
 bracket_specifier	: T_LBRACKET T_NUMBER T_RBRACKET
 					{
 						System.Diagnostics.Debug.WriteLine("bracket_specifier (index): {0}.", $2.Token);
@@ -231,6 +244,17 @@ bracket_specifier	: T_LBRACKET T_NUMBER T_RBRACKET
 					{
 						System.Diagnostics.Debug.WriteLine("bracket_specifier (flattening projection).");
 						OnFlattenProjection();
+					}
+					;
+										
+reduce_expression	: T_REDUCE expression T_RBRACKET paren_expression
+					{
+						OnReduceProjection();
+					}
+					| expression T_REDUCE expression T_RBRACKET T_DOT paren_expression
+					{
+						OnReduceProjection();
+						OnIndexExpression();
 					}
 					;
 
@@ -273,7 +297,7 @@ identifier			: identifier_impl
 						OnIdentifier($1.Token);
 					}
 					;
-					
+
 identifier_impl		: quoted_string
 					| unquoted_string
 					;

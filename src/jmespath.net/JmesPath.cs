@@ -15,6 +15,7 @@ namespace DevLab.JmesPath
         private readonly Encoding _encoding;
         private readonly JmesPathFunctionFactory repository_;
         private readonly ScopeParticipant evaluator_ = new ScopeParticipant();
+        private readonly ReduceAccumulator accumulator_ = new ReduceAccumulator();
 
         public JmesPath() : this(Encoding.UTF8)
         {
@@ -47,6 +48,11 @@ namespace DevLab.JmesPath
 
             var syntax = new SyntaxVisitor();
             analyzer.Expression.Accept(syntax);
+
+            // inject reduce accumumator to all expressions
+
+            var accumulator = new ReduceAccumulatorVisitor(accumulator_);
+            analyzer.Expression.Accept(accumulator);
 
             // inject scope evaluator to all expressions
 
@@ -87,6 +93,23 @@ namespace DevLab.JmesPath
             }
         }
 
+        private sealed class ReduceAccumulatorVisitor : IVisitor
+        {
+            private readonly IReduceAccumulator accumulator_;
+
+            public ReduceAccumulatorVisitor(IReduceAccumulator accumulator)
+            {
+                accumulator_ = accumulator;
+            }
+
+            public void Visit(JmesPathExpression expression)
+            {
+                if (expression is JmesPathReduceProjection reduce)
+                    reduce.SetAccumulator(accumulator_);
+                if (expression is JmesPathReduceAccumulator root)
+                    root.SetAccumulator(accumulator_);
+            }
+        }
         private sealed class ContextEvaluatorVisitor : IVisitor
         {
             private readonly IContextEvaluator evaluator_;

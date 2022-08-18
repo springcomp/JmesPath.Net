@@ -35,6 +35,9 @@ T_STAR			\*
 T_CURRENT		@
 T_ETYPE			&
 
+T_REDUCE        \[%
+T_DOLLAR        \$
+
 T_NUMBER		\-?[0-9]+
 
 T_LSTRING		`[^`]*((\\`)*[^`]*)*`
@@ -77,7 +80,6 @@ E_UNRECOGNIZED	.
 {T_MODULO}			{ return MakeToken(TokenType.T_MODULO); }
 {T_DIV}				{ return MakeToken(TokenType.T_DIV); }
 
-
 {T_COLON}			{ return MakeToken(TokenType.T_COLON); }
 {T_COMMA}			{ return MakeToken(TokenType.T_COMMA); }
 {T_DOT}				{ return MakeToken(TokenType.T_DOT); }
@@ -108,6 +110,9 @@ E_UNRECOGNIZED	.
 {T_RBRACKET}		{ return MakeToken(TokenType.T_RBRACKET); }
 {T_LPAREN}			{ return MakeToken(TokenType.T_LPAREN); }
 {T_RPAREN}			{ return MakeToken(TokenType.T_RPAREN); }
+
+{T_REDUCE}			{ return MakeToken(TokenType.T_REDUCE); }
+{T_DOLLAR}			{ return MakeToken(TokenType.T_DOLLAR); }
 
 {T_WHITESPACE}   	{ }
 {E_UNRECOGNIZED}	{ yyerror(yytext); }

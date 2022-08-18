@@ -57,5 +57,8 @@
         void OnExpressionType();
 
         void OnPipeExpression();
+
+        void OnReduceProjection();
+        void OnReduceAccumulator();
     }
 }

@@ -174,19 +174,19 @@ namespace DevLab.JmesPath
 
         public void OnArithmeticAddition()
             => PopPush((left, right) => new JmesPathAdditionExpression(left, right));
-        public void OnArithmeticSubtraction() 
+        public void OnArithmeticSubtraction()
             => PopPush((left, right) => new JmesPathSubtractionExpression(left, right));
-        public void OnArithmeticMultiplication() 
+        public void OnArithmeticMultiplication()
             => PopPush((left, right) => new JmesPathMultiplicationExpression(left, right));
-        public void OnArithmeticDivision() 
+        public void OnArithmeticDivision()
             => PopPush((left, right) => new JmesPathDivisionExpression(left, right));
-        public void OnArithmeticModulo() 
+        public void OnArithmeticModulo()
             => PopPush((left, right) => new JmesPathModuloExpression(left, right));
-        public void OnArithmeticIntegerDivision() 
+        public void OnArithmeticIntegerDivision()
             => PopPush((left, right) => new JmesPathIntegerDivisionExpression(left, right));
 
         #endregion
-        
+
         #region logical_expression
 
         public void OnOrExpression() =>
@@ -200,7 +200,7 @@ namespace DevLab.JmesPath
 
         #endregion
 
-public void OnIdentifier(string name)
+        public void OnIdentifier(string name)
         {
             Prolog();
 
@@ -345,6 +345,16 @@ public void OnIdentifier(string name)
             Prolog();
 
             expressions_.Push(new JmesPathCurrentNodeExpression());
+        }
+
+        public void OnReduceProjection()
+            => PopPush((left, right) => new JmesPathReduceProjection(left, right));
+
+        public void OnReduceAccumulator()
+        {
+            Prolog();
+
+            expressions_.Push(new JmesPathReduceAccumulator());
         }
 
         #endregion // Expressions

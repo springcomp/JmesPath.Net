@@ -16,14 +16,6 @@ namespace DevLab.JmesPath.Expressions
         public JmesPathSubExpression(JmesPathExpression expression, JmesPathExpression subExpression)
             : base(expression, subExpression)
         {
-            System.Diagnostics.Debug.Assert(
-                subExpression is JmesPathFunctionExpression ||
-                subExpression is JmesPathIdentifier ||
-                subExpression is JmesPathMultiSelectHash ||
-                subExpression is JmesPathMultiSelectList ||
-                subExpression is JmesPathHashWildcardProjection ||
-                false
-                );
         }
 
         public override string ToString()

@@ -1,46 +1,65 @@
-﻿using DevLab.JmesPath.Utils;
+﻿using DevLab.JmesPath.Interop;
+using DevLab.JmesPath.Utils;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DevLab.JmesPath.Expressions
 {
-    public sealed class JmesPathReduceProjection : JmesPathCompoundExpression
+    public sealed class JmesPathReduceProjection : JmesPathProjection
     {
-        public JmesPathReduceProjection(JmesPathExpression seed, JmesPathExpression reduction)
-            : base(seed, reduction)
+        private readonly JmesPathExpression seed_;
+        public JmesPathReduceProjection(JmesPathExpression seed)
         {
+            seed_ = seed;
         }
 
-        protected override JmesPathArgument Transform(JToken json)
+        public override JmesPathArgument Project(JmesPathArgument argument)
         {
-            var array = json as JArray;
-            if (array == null || array.Count == 0)
-                return JTokens.Null;
+            if (argument.IsProjection)
+                return argument;
 
-            var acc = Left?.Transform(json).AsJToken() ?? JTokens.Null;
+            if (!(argument.Token is JArray array))
+                return null;
 
-            try
-            {
-                accumulator_.PushSeed(acc);
-                foreach (var element in array)
-                {
-                    var result = Right.Transform(element).AsJToken();
-                    accumulator_.Accumulator = result;
-                }
-                acc = accumulator_.Accumulator;
-            }
-            finally
-            {
-                accumulator_.PopSeed();
-            }
+            var seed = seed_.Transform(argument).AsJToken();
+            accumulator_.PushSeed(seed);
 
-            return acc;
+            var arguments = array.Select(e => new JmesPathArgument(e));
+            var projection = new JmesPathArgument(arguments);
+            projection.MakeReduction();
+
+            return projection;
         }
+
+        //protected override JmesPathArgument Transform(JToken json)
+        //{
+        //    var array = json as JArray;
+        //    if (array == null || array.Count == 0)
+        //        return JTokens.Null;
+
+        //    var acc = seed_?.Transform(json).AsJToken() ?? JTokens.Null;
+
+        //    try
+        //    {
+        //        accumulator_.PushSeed(acc);
+        //        foreach (var element in array)
+        //        {
+        //            var result = Right.Transform(element).AsJToken();
+        //            accumulator_.Accumulator = result;
+        //        }
+        //        acc = accumulator_.Accumulator;
+        //    }
+        //    finally
+        //    {
+        //        accumulator_.PopSeed();
+        //    }
+
+        //    return acc;
+        //}
 
         protected override string Format()
-            => $"[?{Left}].{Right}";
+            => $"[%{seed_}]";
     }
 
     public sealed class JmesPathReduceAccumulator : JmesPathExpression

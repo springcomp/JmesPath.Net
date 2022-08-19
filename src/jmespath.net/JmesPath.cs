@@ -103,12 +103,7 @@ namespace DevLab.JmesPath
             }
 
             public void Visit(JmesPathExpression expression)
-            {
-                if (expression is JmesPathReduceProjection reduce)
-                    reduce.SetAccumulator(accumulator_);
-                if (expression is JmesPathReduceAccumulator root)
-                    root.SetAccumulator(accumulator_);
-            }
+                => expression.SetAccumulator(accumulator_);
         }
         private sealed class ContextEvaluatorVisitor : IVisitor
         {

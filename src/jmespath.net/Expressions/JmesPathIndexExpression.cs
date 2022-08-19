@@ -13,6 +13,7 @@ namespace DevLab.JmesPath.Expressions
                 specifier is JmesPathFlattenProjection ||
                 specifier is JmesPathListWildcardProjection ||
                 specifier is JmesPathSliceProjection ||
+                specifier is JmesPathReduceProjection ||
                 false
                 );
         }

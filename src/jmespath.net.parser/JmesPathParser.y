@@ -112,7 +112,6 @@ expression_impl		: sub_expression
 					| current_node
 					| arithmetic_expression
 					| reduce_accumulator
-					| reduce_expression
 					;
 
 sub_expression		: sub_expression_impl
@@ -126,6 +125,7 @@ sub_expression_impl	: expression T_DOT identifier
 					| expression T_DOT multi_select_list
 					| expression T_DOT function_expression
 					| expression T_DOT hash_wildcard
+					| expression T_DOT paren_expression
 					;
 
 arithmetic_expression	: T_PLUS expression
@@ -245,16 +245,13 @@ bracket_specifier	: T_LBRACKET T_NUMBER T_RBRACKET
 						System.Diagnostics.Debug.WriteLine("bracket_specifier (flattening projection).");
 						OnFlattenProjection();
 					}
-					;
-										
-reduce_expression	: T_REDUCE expression T_RBRACKET paren_expression
+					| T_REDUCE expression T_RBRACKET
 					{
 						OnReduceProjection();
 					}
-					| expression T_REDUCE expression T_RBRACKET T_DOT paren_expression
+					| T_REDUCE T_RBRACKET
 					{
 						OnReduceProjection();
-						OnIndexExpression();
 					}
 					;
 

@@ -348,7 +348,12 @@ namespace DevLab.JmesPath
         }
 
         public void OnReduceProjection()
-            => PopPush((left, right) => new JmesPathReduceProjection(left, right));
+        {
+            Prolog();
+
+            var seed = expressions_.Pop();
+            expressions_.Push(new JmesPathReduceProjection(seed));
+        }
 
         public void OnReduceAccumulator()
         {

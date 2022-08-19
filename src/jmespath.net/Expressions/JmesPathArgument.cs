@@ -18,6 +18,7 @@ namespace DevLab.JmesPath.Expressions
         {
             Token = token ?? JTokens.Null;
             Projection = null;
+            IsReduction = false;
         }
 
         public JmesPathArgument(IEnumerable<JmesPathArgument> projection)
@@ -25,11 +26,17 @@ namespace DevLab.JmesPath.Expressions
             Token = null;
             Debug.Assert(projection != null);
             Projection = projection.ToArray();
+            IsReduction = false;
         }
 
         public bool IsProjection
             => Projection != null
             ;
+
+        public bool IsReduction { get; private set; }
+
+        public void MakeReduction()
+            => IsReduction = true;
 
         public static implicit operator JmesPathArgument(JToken token)
             => new JmesPathArgument(token);

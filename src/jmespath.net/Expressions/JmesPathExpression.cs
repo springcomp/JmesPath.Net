@@ -24,17 +24,32 @@ namespace DevLab.JmesPath.Expressions
         {
             if (argument.IsProjection)
             {
-                var items = new List<JmesPathArgument>();
-                foreach (var projected in argument.Projection)
-                {
-                    var item = Transform(projected);
-                    if (item.IsProjection)
-                        items.Add(item);
-                    else if (item.Token != JTokens.Null)
-                        items.Add(item);
-                }
+                var isReduction = argument.IsReduction;
 
-                return new JmesPathArgument(items);
+                try
+                {
+                    var items = new List<JmesPathArgument>();
+                    foreach (var projected in argument.Projection)
+                    {
+                        var item = Transform(projected);
+
+                        if (isReduction)
+                            accumulator_.Accumulator = item.Token;
+
+                        else if (item.IsProjection || item.Token != JTokens.Null)
+                            items.Add(item);
+                    }
+
+                    return isReduction
+                        ? accumulator_.Accumulator
+                        : new JmesPathArgument(items)
+                        ;
+                }
+                finally
+                {
+                    if (isReduction)
+                        accumulator_.PopSeed();
+                }
             }
 
             return Transform(argument.Token);

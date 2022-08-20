@@ -30,7 +30,7 @@ namespace DevLab.JmesPath.Expressions
         public int? Step
             => step_;
 
-        public override JmesPathArgument Project(JmesPathArgument argument)
+        protected override JmesPathArgument Project(JmesPathArgument argument)
         {
             if (argument.IsProjection)
                 argument = argument.AsJToken();

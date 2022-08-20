@@ -308,6 +308,13 @@ namespace DevLab.JmesPath
             expressions_.Push(new JmesPathCurrentNodeExpression());
         }
 
+        public void OnRootNode()
+        {
+            Prolog();
+
+            expressions_.Push(new JmesPathRootNodeExpression());
+        }
+
         #endregion // Expressions
 
         void PopPush<T>(Func<JmesPathExpression, T> factory)

@@ -22,6 +22,7 @@
         void OnComparisonNotEqual();
 
         void OnCurrentNode();
+        void OnRootNode();
 
         void OnSubExpression();
 

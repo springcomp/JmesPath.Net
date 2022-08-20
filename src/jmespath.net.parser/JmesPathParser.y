@@ -30,6 +30,7 @@
 	T_FLATTEN,
 	T_STAR,
 	T_CURRENT,
+	T_ROOT,
 	T_ETYPE,
 
 	T_NUMBER,
@@ -90,6 +91,7 @@ expression_impl		: sub_expression
 					| function_expression
 					| raw_string
 					| current_node
+					| root_node
 					;
 
 sub_expression		: sub_expression_impl
@@ -150,6 +152,11 @@ function_arguments	: expression
 current_node		: T_CURRENT
 					{
 						OnCurrentNode();
+					}
+					;
+root_node			: T_ROOT
+					{
+						OnRootNode();
 					}
 					;
 expression_type		: T_ETYPE expression

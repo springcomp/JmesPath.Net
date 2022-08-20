@@ -21,38 +21,43 @@ namespace DevLab.JmesPath.Expressions
         /// <param name="argument"></param>
         /// <returns></returns>
         public virtual JmesPathArgument Transform(JmesPathArgument argument)
+            => argument.IsProjection
+                ? Project(argument.Projection)
+                : Transform(argument.Token)
+                ;
+
+        protected virtual JmesPathArgument Project(IEnumerable<JmesPathArgument> arguments)
         {
-            if (argument.IsProjection)
+            var items = new List<JmesPathArgument>();
+            foreach (var projected in arguments)
             {
-                var isReduction = argument.IsReduction;
-
-                try
-                {
-                    var items = new List<JmesPathArgument>();
-                    foreach (var projected in argument.Projection)
-                    {
-                        var item = Transform(projected);
-
-                        if (isReduction)
-                            accumulator_.Accumulator = item.Token;
-
-                        else if (item.IsProjection || item.Token != JTokens.Null)
-                            items.Add(item);
-                    }
-
-                    return isReduction
-                        ? accumulator_.Accumulator
-                        : new JmesPathArgument(items)
-                        ;
-                }
-                finally
-                {
-                    if (isReduction)
-                        accumulator_.PopSeed();
-                }
+                var item = Transform(projected);
+                if (item.IsProjection || item.Token != JTokens.Null)
+                    items.Add(item);
             }
 
-            return Transform(argument.Token);
+            return new JmesPathArgument(items);
+        }
+
+        private JmesPathArgument Reduce(IEnumerable<JmesPathArgument> arguments)
+        {
+            System.Diagnostics.Debug.Assert(accumulator_ != null);
+            // accumulator_.PushSeed() has been called by JmesPathReduceProjection
+
+            try
+            {
+                foreach (var argument in arguments)
+                {
+                    var item = Transform(argument);
+                    accumulator_.Accumulator = item.Token;
+                }
+
+                return accumulator_.Accumulator;
+            }
+            finally
+            {
+                accumulator_.PopSeed();
+            }
         }
 
         /// <summary>

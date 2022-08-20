@@ -33,10 +33,10 @@ T_FLATTEN		\[\]
 T_FILTER		\[\?
 T_STAR			\*
 T_CURRENT		@
+T_ROOT			\$
 T_ETYPE			&
 
 T_REDUCE        \[%
-T_DOLLAR        \$
 
 T_NUMBER		\-?[0-9]+
 
@@ -96,6 +96,7 @@ E_UNRECOGNIZED	.
 {T_FLATTEN}			{ return MakeToken(TokenType.T_FLATTEN); }
 {T_STAR}			{ return MakeToken(TokenType.T_STAR); }
 {T_CURRENT}			{ return MakeToken(TokenType.T_CURRENT); }
+{T_ROOT}			{ return MakeToken(TokenType.T_ROOT); }
 {T_ETYPE}			{ return MakeToken(TokenType.T_ETYPE); }
 
 {T_NUMBER}			{ return MakeToken(TokenType.T_NUMBER); }
@@ -112,7 +113,6 @@ E_UNRECOGNIZED	.
 {T_RPAREN}			{ return MakeToken(TokenType.T_RPAREN); }
 
 {T_REDUCE}			{ return MakeToken(TokenType.T_REDUCE); }
-{T_DOLLAR}			{ return MakeToken(TokenType.T_DOLLAR); }
 
 {T_WHITESPACE}   	{ }
 {E_UNRECOGNIZED}	{ yyerror(yytext); }

@@ -243,9 +243,9 @@ namespace DevLab.JmesPath
         }
 
         void OnCurrentNode() => generator_.OnCurrentNode();
-
+        void OnRootNode() => generator_.OnRootNode();
         void OnReduceProjection() => generator_.OnReduceProjection();
-        void OnReduceAccumulator() => generator_.OnReduceAccumulator();
+
         
         #endregion // Expressions
     }

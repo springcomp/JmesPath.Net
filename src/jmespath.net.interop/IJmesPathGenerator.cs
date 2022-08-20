@@ -31,6 +31,7 @@
         void OnArithmeticIntegerDivision();
 
         void OnCurrentNode();
+        void OnRootNode();
 
         void OnSubExpression();
 
@@ -59,6 +60,5 @@
         void OnPipeExpression();
 
         void OnReduceProjection();
-        void OnReduceAccumulator();
     }
 }

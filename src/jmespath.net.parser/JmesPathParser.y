@@ -37,6 +37,7 @@
 	T_FLATTEN,
 	T_STAR,
 	T_CURRENT,
+	T_ROOT,
 	T_ETYPE,
 
 	T_NUMBER,
@@ -53,7 +54,6 @@
 	T_RPAREN
 
 	T_REDUCE
-	T_DOLLAR
 
 %left T_PIPE
 %left T_OR
@@ -110,8 +110,8 @@ expression_impl		: sub_expression
 					| function_expression
 					| raw_string
 					| current_node
+					| root_node
 					| arithmetic_expression
-					| reduce_accumulator
 					;
 
 sub_expression		: sub_expression_impl
@@ -212,13 +212,11 @@ current_node		: T_CURRENT
 						OnCurrentNode();
 					}
 					;
-
-reduce_accumulator	: T_DOLLAR
+root_node			: T_ROOT
 					{
-						OnReduceAccumulator();
+						OnRootNode();
 					}
 					;
-
 expression_type		: T_ETYPE expression
 					{
 						OnExpressionType();

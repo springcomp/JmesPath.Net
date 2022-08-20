@@ -347,19 +347,17 @@ namespace DevLab.JmesPath
             expressions_.Push(new JmesPathCurrentNodeExpression());
         }
 
+        public void OnRootNode()
+        {
+            Prolog();
+        }
+
         public void OnReduceProjection()
         {
             Prolog();
 
             var seed = expressions_.Pop();
             expressions_.Push(new JmesPathReduceProjection(seed));
-        }
-
-        public void OnReduceAccumulator()
-        {
-            Prolog();
-
-            expressions_.Push(new JmesPathReduceAccumulator());
         }
 
         #endregion // Expressions

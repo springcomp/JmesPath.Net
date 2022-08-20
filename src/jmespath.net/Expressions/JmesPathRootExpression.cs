@@ -4,8 +4,6 @@ namespace DevLab.JmesPath.Expressions
 {
     internal sealed class JmesPathRootExpression : JmesPathSimpleExpression
     {
-        internal ScopeParticipant scopes_;
-
         public JmesPathRootExpression(JmesPathExpression expression)
             : base(expression)
         {

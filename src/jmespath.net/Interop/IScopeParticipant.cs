@@ -19,6 +19,7 @@ namespace DevLab.JmesPath.Interop
     public interface IContextEvaluator
     {
         JToken Evaluate(string identifier);
+        void Mutate(string identifier, JToken value);
     }
 
     public interface IContextHolder

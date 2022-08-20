@@ -24,6 +24,25 @@ namespace DevLab.JmesPath
             return JTokens.Null;
         }
 
+        public void Mutate(string identifier, JToken value)
+        {
+            System.Diagnostics.Debug.Assert(scopes_.Count != 0);
+
+            foreach (var scope in scopes_)
+            {
+                if (scope[identifier] != null)
+                {
+                    var current = scope as JObject;
+                    current[identifier] = value;
+
+                    return;
+                }    
+            }
+
+            System.Diagnostics.Debug.Assert(false);
+            throw new KeyNotFoundException(identifier);
+        }
+
         public void PushScope(JToken token)
         {
             scopes_.Push(token);

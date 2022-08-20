@@ -8,9 +8,13 @@ namespace DevLab.JmesPath.Expressions
     /// <summary>
     /// Represents the base class for a JmesPath expression.
     /// </summary>
-    public abstract class JmesPathExpression
+    public abstract class JmesPathExpression : IContextHolder
     {
-        protected IReduceAccumulator accumulator_ = null;
+        internal IScopeParticipant scopes_ = null;
+
+        protected JmesPathExpression()
+        {
+        }
 
         /// <summary>
         /// Evaluates the expression against the specified JSON object.
@@ -22,7 +26,9 @@ namespace DevLab.JmesPath.Expressions
         /// <returns></returns>
         public virtual JmesPathArgument Transform(JmesPathArgument argument)
             => argument.IsProjection
-                ? Project(argument.Projection)
+                ? argument.IsReduction
+                    ? Reduce(argument.Projection)
+                    : Project(argument.Projection)
                 : Transform(argument.Token)
                 ;
 
@@ -41,22 +47,22 @@ namespace DevLab.JmesPath.Expressions
 
         private JmesPathArgument Reduce(IEnumerable<JmesPathArgument> arguments)
         {
-            System.Diagnostics.Debug.Assert(accumulator_ != null);
-            // accumulator_.PushSeed() has been called by JmesPathReduceProjection
+            System.Diagnostics.Debug.Assert(scopes_ != null);
+            // scopes_.PushScope() has been called by JmesPathReduceProjection
 
             try
             {
                 foreach (var argument in arguments)
                 {
                     var item = Transform(argument);
-                    accumulator_.Accumulator = item.Token;
+                    (this as IContextHolder).Evaluator?.Mutate("$", item.Token);
                 }
 
-                return accumulator_.Accumulator;
+                return (this as IContextHolder).Evaluator?.Evaluate("$");
             }
             finally
             {
-                accumulator_.PopSeed();
+                scopes_.PopScope();
             }
         }
 
@@ -67,10 +73,9 @@ namespace DevLab.JmesPath.Expressions
         /// <returns></returns>
         protected abstract JmesPathArgument Transform(JToken json);
 
-        internal void SetAccumulator(IReduceAccumulator accumulator)
-            => accumulator_ = accumulator;
-
         public bool IsExpressionType { get; private set; }
+
+        IContextEvaluator IContextHolder.Evaluator { get; set; }
 
         public static void MakeExpressionType(JmesPathExpression expression)
             => expression.IsExpressionType = true;

@@ -350,6 +350,8 @@ namespace DevLab.JmesPath
         public void OnRootNode()
         {
             Prolog();
+
+            expressions_.Push(new JmesPathRootNodeExpression());
         }
 
         public void OnReduceProjection()

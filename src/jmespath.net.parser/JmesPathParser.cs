@@ -123,6 +123,8 @@ namespace DevLab.JmesPath
 
         void OnFlattenProjection() => generator_.OnFlattenProjection();
 
+        void OnHashWildcardProjection() => generator_.OnHashWildcardProjection();
+
         void OnListWildcardProjection() => generator_.OnListWildcardProjection();
 
         void OnIndexExpression() => generator_.OnIndexExpression();
@@ -171,9 +173,6 @@ namespace DevLab.JmesPath
 
         void OnIdentifier(Token token) =>
             generator_.OnIdentifier((string)token.Value);
-
-        void OnHashWildcardProjection() =>
-            generator_.OnHashWildcardProjection();
 
         #region multi_select_hash
 

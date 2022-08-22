@@ -29,6 +29,10 @@ namespace DevLab.JmesPath
             = new Stack<JmesPathExpression>()
             ;
 
+        readonly Stack<ProjectionMetadata> projections_
+            = new Stack<ProjectionMetadata>()
+            ;
+
         JmesPathExpression expression_;
 
         public JmesPathGenerator(IFunctionRepository repository)
@@ -97,23 +101,26 @@ namespace DevLab.JmesPath
             System.Diagnostics.Debug.Assert(expressions_.Count >= 1);
 
             var comparison = expressions_.Pop();
-            var expression = new JmesPathFilterProjection(comparison);
+            var projection = new FilterExpressionMetadata
+            {
+                Comparator = comparison,
+            };
 
-            expressions_.Push(expression);
+            projections_.Push(projection);
         }
 
         public void OnFlattenProjection()
         {
             Prolog();
 
-            expressions_.Push(new JmesPathFlattenProjection());
+            projections_.Push(new FlattenExpressionMetadata());
         }
 
         public void OnListWildcardProjection()
         {
             Prolog();
 
-            expressions_.Push(new JmesPathListWildcardProjection());
+            projections_.Push(new ListWildcardExpressionMetadata());
         }
 
         public void OnIndexExpression()
@@ -123,9 +130,11 @@ namespace DevLab.JmesPath
         {
             Prolog();
 
-            var sliceExpression = new JmesPathSliceProjection(start, stop, step);
-
-            expressions_.Push(sliceExpression);
+            projections_.Push(new SliceExpressionMetadata { 
+                Start = start,
+                Stop = stop,
+                Step = step,
+            });
         }
 
         #endregion
@@ -169,13 +178,11 @@ namespace DevLab.JmesPath
             expressions_.Push(expression);
         }
 
-        static readonly JmesPathHashWildcardProjection JmesPathHashWildcardProjection = new JmesPathHashWildcardProjection();
-
         public void OnHashWildcardProjection()
         {
             Prolog();
 
-            expressions_.Push(JmesPathHashWildcardProjection);
+            projections_.Push(new HashWildcardExpressionMetadata());
         }
 
         #region multi_select_hash
@@ -334,5 +341,53 @@ namespace DevLab.JmesPath
 
             expressions_.Push(factory(left, right));
         }
+
+        #region Projection Metadata
+
+        class ProjectionMetadata
+        {
+            public ProjectionMetadata(string type)
+            {
+                Projection = type;
+            }
+            public string Projection { get; }
+        }
+        sealed class FlattenExpressionMetadata : ProjectionMetadata
+        {
+            public FlattenExpressionMetadata()
+                : base("flatten-expression")
+            { }
+        }
+        sealed class ListWildcardExpressionMetadata : ProjectionMetadata
+        {
+            public ListWildcardExpressionMetadata()
+                : base("list-wildcard-expression")
+            { }
+        }
+        sealed class HashWildcardExpressionMetadata : ProjectionMetadata
+        {
+            public HashWildcardExpressionMetadata()
+                : base("hash-wildcard-expression")
+            { }
+        }
+        sealed class FilterExpressionMetadata : ProjectionMetadata
+        {
+            public FilterExpressionMetadata()
+                : base("list-filter-expression")
+            { }
+            public JmesPathExpression Comparator { get; set; }
+        }
+        sealed class SliceExpressionMetadata : ProjectionMetadata
+        {
+            public SliceExpressionMetadata()
+                : base("slice-expression")
+            {
+            }
+            public int? Start { get; set; }
+            public int? Stop { get; set; }
+            public int? Step { get; set; }
+        }
+
+        #endregion
     }
 }

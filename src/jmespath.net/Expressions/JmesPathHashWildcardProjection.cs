@@ -5,6 +5,11 @@ namespace DevLab.JmesPath.Expressions
 {
     public sealed class JmesPathHashWildcardProjection : JmesPathProjection
     {
+        public JmesPathHashWildcardProjection(JmesPathExpression child)
+            : base(child)
+        {
+        }
+
         public override JmesPathArgument Project(JmesPathArgument argument)
         {
             if (argument.IsProjection)

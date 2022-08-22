@@ -7,6 +7,11 @@ namespace DevLab.JmesPath.Expressions
 {
     public sealed class JmesPathFlattenProjection : JmesPathProjection
     {
+        public JmesPathFlattenProjection(JmesPathExpression child = null)
+            : base(child)
+        {
+        }
+
         public override JmesPathArgument Project(JmesPathArgument argument)
         {
             if (argument.IsProjection)

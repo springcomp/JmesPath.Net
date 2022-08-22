@@ -14,7 +14,8 @@ namespace DevLab.JmesPath.Expressions
         private readonly int? stop_;
         private readonly int? step_;
 
-        public JmesPathSliceProjection(int? start, int? stop, int? step)
+        public JmesPathSliceProjection(int? start, int? stop, int? step, JmesPathExpression child = null)
+            : base(child)
         {
             start_ = start;
             stop_ = stop;

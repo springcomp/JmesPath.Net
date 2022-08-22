@@ -20,7 +20,29 @@ namespace DevLab.JmesPath.Expressions
         /// <returns></returns>
         public virtual JmesPathArgument Transform(JmesPathArgument argument)
         {
-            if (argument.IsProjection)
+            if (this is JmesPathProjection)
+            {
+                var projection = this as JmesPathProjection;
+                var projected = projection.Project(argument);
+
+                var expression = (this as JmesPathProjection).Expression;
+                if (expression != null)
+                {
+                    var items = new List<JmesPathArgument>();
+                    var array = projected.AsJToken();
+                    foreach (var element in array)
+                    {
+                        var item = expression.Transform(element);
+                        if (item.IsProjection || item.Token != JTokens.Null)
+                            items.Add(item);
+                    }
+
+                    return new JmesPathArgument(items);
+                }
+
+                return projected;
+            }
+            else if (argument.IsProjection)
             {
                 var items = new List<JmesPathArgument>();
                 foreach (var projected in argument.Projection)

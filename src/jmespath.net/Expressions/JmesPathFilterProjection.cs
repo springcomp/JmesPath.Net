@@ -9,12 +9,13 @@ namespace DevLab.JmesPath.Expressions
     {
         private readonly JmesPathExpression expression_;
 
-        public JmesPathFilterProjection(JmesPathExpression expression)
+        public JmesPathFilterProjection(JmesPathExpression expression, JmesPathExpression child = null)
+            : base(child)
         {
             expression_ = expression;
         }
 
-        public JmesPathExpression Expression
+        public JmesPathExpression Projection
             => expression_;
 
         public override JmesPathArgument Project(JmesPathArgument argument)

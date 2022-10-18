@@ -10,6 +10,8 @@ namespace jmespath.net.tests.Utils
         [Theory]
         [InlineData("𝌆", 1, "U+1D306 TETRAGRAM FOR CENTER")]
         [InlineData("😀", 1, "U+1F600 GRINNING FACE")]
+        [InlineData("é", 1, "U+00E9 LATIN SMALL LETTER E WITH ACUTE ACCENT")]
+        [InlineData("è", 1, "U+0065 LATIN SMALL LETTER E, U+0301 COMBINING ACUTE ACCENT")]
         public void Length(string text, int expected, string name)
         {
             var t = new Text(text);

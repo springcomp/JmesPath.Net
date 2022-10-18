@@ -11,6 +11,25 @@ namespace DevLab.JmesPath.Utils
     /// The <see cref="Text" /> class represents a sequence of Unicode codepoints.
     /// If differs from the .NET <see cref="String" /> class in that is correctly
     /// handles codepoints from supplementary planes, including surrogate pairs.
+    ///
+    /// characters in a .NET string are represented by a 21-bit code value
+    /// of a character in the Basic Multilingual Plane (0x0000 - 0x10FFFF)
+    /// it can consists of either:
+    ///
+    /// - a single 16-bit codepoint (U+0000 to U+FFFF excluding the surrogate range U+D800 to U+DFFF).
+    /// In that case, a Unicode character, identified by its codepoint, maps to a single 16-bit code unit.
+    ///   
+    /// or
+    ///
+    /// - a pair of 16-bit surrogate code units (high U+D800 to U+DBFF and low U+DC00 to U+DFFF).
+    /// In that case, a Unicode character, identifier by its codepoint, maps to a sequence of two 16-bit code units.
+    ///
+    /// Additionally, some Unicode characters can have multiple representations. For instance, the
+    /// character 'é' can be encoded using the following two difference sequences of codepoints:
+    ///
+    /// - 'é' U+00E9 LATIN SMALL LETTER E WITH ACUTE ACCENT.
+    /// - 'è' U+0065 LATIN SMALL LETTER E, U+0301 COMBINING ACUTE ACCENT.
+    ///
     /// </summary>
     internal sealed partial class Text : IEnumerable<string>, IEquatable<Text>, IComparable<Text>
     {

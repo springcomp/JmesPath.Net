@@ -56,6 +56,8 @@ namespace jmespath.net.tests.Utils
 
         [Theory]
         [InlineData("a𝌆b", "b𝌆a")]
+        [InlineData("aéb", "béa")]
+        [InlineData("ae\x0301b", "béa")]
 
         public void Reverse(string text, string expected)
         {

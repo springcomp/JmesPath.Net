@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using DevLab.JmesPath.Utils;
+using jmespath.net.Functions.Impl;
 using Newtonsoft.Json.Linq;
 
 namespace DevLab.JmesPath.Functions
@@ -30,8 +31,8 @@ namespace DevLab.JmesPath.Functions
                 case "string":
                     {
                         var text = (Text)token.Value<String>();
-                        var reversed = new Text(text.CodePoints.Reverse().ToArray());
-                        return new JValue((string)reversed);
+                        var reversed = text.Invert();
+                        return new JValue((string) reversed);
                     }
                 case "array":
                     {

@@ -1,10 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using DevLab.JmesPath.Utils;
 using QUT.Gppg;
 
 namespace DevLab.JmesPath
 {
+    public sealed class JmesPathTokenizer
+    {
+        private readonly JmesPathScanner scanner_;
+        public JmesPathTokenizer(Stream stream)
+        {
+            scanner_ = new JmesPathScanner(stream, Encoding.UTF8.CodePage);
+            scanner_.InitializeLookaheadQueue();
+        }
+
+        public int GetNextToken()
+            => scanner_.yylex();
+    }
+
     internal partial class JmesPathScanner
     {
         private PushbackQueue<ScanObj> pushback_;

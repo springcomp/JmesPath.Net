@@ -5,6 +5,7 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Attributes;
 
 using jmespath.lexer;
+using DevLab.JmesPath;
 
 BenchmarkSwitcher.FromAssembly(typeof(Tests).Assembly).Run(args);
 
@@ -16,7 +17,7 @@ public class Tests
 		= new MemoryStream();
 
 	[Benchmark] public void RunNew() { for (var i = 0; i < 10_000; i++) ScanNew(); }
-	// [Benchmark] public void Run() { for (var i = 0; i < 10_000; i++) Scan(); }
+	[Benchmark] public void Run() { for (var i = 0; i < 10_000; i++) Scan(); }
 	private const string expression = "foo";
 
 	public void ScanNew()
@@ -32,14 +33,13 @@ public class Tests
 		} while (true);
 	}
 
-	// public void Scan()
-	// {
-	// 	var stream = new MemoryStream(Encoding.UTF8.GetBytes(expression));
-	// 	var scanner = new JmesPathScanner(stream, Encoding.UTF8);
-	// 	scanner.InitializeLookaheadQueue();
+	public void Scan()
+	{
+		var stream = new MemoryStream(Encoding.UTF8.GetBytes(expression));
+		var scanner = new JmesPathTokenizer(stream);
 
-	// 	int token;
-	// 	while ((token = scanner.yylex()) != TokenType.EOF)
-	// 		;
-	// }
+		int token;
+		while ((token = scanner.GetNextToken()) != (int)TokenType.EOF)
+			;
+	}
 }

@@ -26,11 +26,7 @@ namespace QUT.Gppg {
     /// </summary>
     /// <typeparam name="TValue">Semantic value type</typeparam>
     /// <typeparam name="TSpan">Location type</typeparam>
-#if EXPORT_GPPG
     public abstract class ShiftReduceParser<TValue, TSpan>
-#else
-    internal abstract class ShiftReduceParser<TValue, TSpan>
-#endif
  where TSpan : IMerge<TSpan>, new() {
         private AbstractScanner<TValue, TSpan> scanner;
         /// <summary>
@@ -596,11 +592,7 @@ namespace QUT.Gppg {
     /// is the right-hand-side length of the production.
     /// </summary>
     /// <typeparam name="TSpan">The Location type</typeparam>
-#if EXPORT_GPPG
     public interface IMerge<TSpan>
-#else
-    internal interface IMerge<TSpan>
-#endif
  {
         /// <summary>
         /// Interface method that creates a location object from
@@ -619,12 +611,7 @@ namespace QUT.Gppg {
     /// If you don't declare "%YYLTYPE Foo" the parser
     /// will expect to deal with this type.
     /// </summary>
-#if EXPORT_GPPG
     public class LexLocation : IMerge<LexLocation>
-#else
-    [SuppressMessage( "Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses" )]
-    internal class LexLocation : IMerge<LexLocation>
-#endif
  {
         private int startLine;   // start line
         private int startColumn; // start column
@@ -681,11 +668,7 @@ namespace QUT.Gppg {
     /// </summary>
     /// <typeparam name="TValue">Semantic value type YYSTYPE</typeparam>
     /// <typeparam name="TSpan">Source location type YYLTYPE</typeparam>
-#if EXPORT_GPPG
     public abstract class AbstractScanner<TValue, TSpan>
-#else
-    internal abstract class AbstractScanner<TValue, TSpan>
-#endif
  where TSpan : IMerge<TSpan> {
         /// <summary>
         /// Lexical value optionally set by the scanner. The value
@@ -745,20 +728,12 @@ namespace QUT.Gppg {
     /// Encapsulated state for the parser.
     /// Opaque to users, visible to the tool-generated code.
     /// </summary>
-#if EXPORT_GPPG
     public class State
     {
         /// <summary>
         /// The number of states in the automaton.
         /// </summary>
         public int number;
-#else
-    internal class State {
-        /// <summary>
-        /// The index of this state in the states array.
-        /// </summary>
-        internal int number;
-#endif
         internal Dictionary<int, int> ParserTable;   // Terminal -> ParseAction
         internal Dictionary<int, int> Goto;          // NonTerminal -> State;
         internal int defaultAction; // = 0;		     // ParseAction
@@ -813,11 +788,7 @@ namespace QUT.Gppg {
     /// <summary>
     /// Rule representation at runtime.
     /// </summary>
-#if EXPORT_GPPG
     public class Rule
-#else
-    internal class Rule
-#endif
  {
         internal int LeftHandSide; // symbol
         internal int[] RightHandSide; // symbols
@@ -843,11 +814,7 @@ namespace QUT.Gppg {
     /// (3) The location stack, T = TSpan.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-#if EXPORT_GPPG
     public class PushdownPrefixState<T>
-#else
-    internal class PushdownPrefixState<T>
-#endif
  {
         //  Note that we cannot use the BCL Stack<T> class
         //  here as derived types need to index into stacks.

@@ -47,8 +47,4 @@
     <PackageReference Include="YaccLexTools" Version="1.2.2" PrivateAssets="All" />
   </ItemGroup>
 
-  <Target Name="_RestoreDotnetCliTool" Inputs="JmesPathScanner.lex;JmesPathParser.y" Outputs="JmesPathScanner.g.cs;JmesPathParser.g.cs">
-    <Exec Command="dotnet tool restore" />
-  </Target>
-
 </Project>

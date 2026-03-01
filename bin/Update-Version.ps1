@@ -45,11 +45,10 @@ PROCESS {
       -Path $_
   }
 
-  "$($SRC_DIR)/src/jmespath.net.parser/jmespath.net.parser.nuspec" |% {
+  "$SRC_DIR/src/jmespath.net.parser/jmespath.net.parser.nuspec" |% {
 
     Update-NuspecVersion `
       -Version $version `
       -Path $_
-      )
   }
 }

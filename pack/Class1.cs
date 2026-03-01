@@ -1,6 +1,7 @@
-﻿namespace pack;
-
-public class Class1
+﻿namespace pack
 {
+  public class Class1
+  {
 
+  }
 }

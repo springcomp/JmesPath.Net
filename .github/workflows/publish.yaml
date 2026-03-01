@@ -29,11 +29,19 @@ jobs:
           SN_SALT: ${{ secrets.SN_SALT }}
           SN_INIT: ${{ secrets.SN_INIT }}
 
+      - name: 📝 Update version
+        run: bin/Update-Version.PS1 -Version "$env:VERSION"
+        shell: pwsh
+        env:
+          VERSION: ${{ github.ref_name }}
+
       - name: 📦 Restore dependencies
         run: dotnet restore pack/pack.sln
 
       - name: 🔨 Build
         run: dotnet build pack/pack.sln --configuration Release --no-restore
+
+      # TODO: pack
 
       # Use the ambient GitHub token to login to NuGet and retrieve an API key
       - name: 🔑 NuGet login (OIDC → temp API key)
@@ -42,3 +50,5 @@ jobs:
         with:
           # Secret is your NuGet username, e.g. 'jmespath-community'
           user: ${{ secrets.NUGET_USER }}
+
+      # TODO: push nuget package

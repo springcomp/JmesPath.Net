@@ -21,6 +21,14 @@ jobs:
         with:
           dotnet-version: "6.0.x"
 
+      - name: 🔓 Decrypt strong-name key
+        run: bin/EncryptDecryptFile.PS1
+        shell: pwsh
+        env:
+          SN_PASSPHRASE: ${{ secrets.SN_PASSPHRASE }}
+          SN_SALT: ${{ secrets.SN_SALT }}
+          SN_INIT: ${{ secrets.SN_INIT }}
+
       - name: 📦 Restore dependencies
         run: dotnet restore pack/pack.sln
 

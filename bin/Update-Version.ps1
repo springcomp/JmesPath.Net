@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    $version = $ENV:appveyor_build_version
+    [string]$version
 )
 
 BEGIN {
@@ -12,7 +12,6 @@ BEGIN {
       throw;
   }
 
-  Function Get-ScriptDirectory { Split-Path -parent $PSCommandPath }
   Function Update-CsprojVersion {
     param([string]$path, [string]$version)
     [xml]$document = Get-Content -Path $path -Raw
@@ -38,24 +37,19 @@ PROCESS {
   $SRC_DIR = (Resolve-Path -Path (
     Join-Path -Path $PSScriptRoot -ChildPath "..")).Path
 
-  "$($SRC_DIR)/src/jmespath.net/jmespath.net.csproj", `
-  "$($SRC_DIR)/src/jmespath.net.parser/jmespath.net.parser.csproj" |% {
+  "$SRC_DIR/src/jmespath.net/jmespath.net.csproj", `
+  "$SRC_DIR/src/jmespath.net.parser/jmespath.net.parser.csproj" |% {
 
     Update-CsprojVersion `
       -Version $version `
-      (Join-Path `
-        -Path (Get-ScriptDirectory) `
-        -ChildPath $_ `
-      )
+      -Path $_
   }
 
   "$($SRC_DIR)/src/jmespath.net.parser/jmespath.net.parser.nuspec" |% {
 
     Update-NuspecVersion `
       -Version $version `
-      (Join-Path `
-        -Path (Get-ScriptDirectory) `
-        -ChildPath $_ `
+      -Path $_
       )
   }
 }
